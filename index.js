@@ -1,10 +1,14 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const dotenv = require("dotenv");
 const helmet = require("helmet");
 const multer = require("multer");
 const path = require("path");
 const routes = require("./routes");
+const PORT = process.env.PORT;
+
+dotenv.config();
 
 require("./src/database");
 
@@ -38,6 +42,6 @@ app.post("/api/uploadUserImg", upload.single("file"), (req, res) => {
 
 app.use(routes);
 
-app.listen(5000, () => {
-    console.log("backend is RUNNING!");
+app.listen(process.env.PORT | PORT, () => {
+    console.log(`backend is RUNNING on port: ${process.env.PORT}!`);
 })
