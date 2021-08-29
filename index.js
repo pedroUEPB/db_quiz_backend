@@ -42,6 +42,6 @@ app.post("/api/uploadUserImg", upload.single("file"), (req, res) => {
 
 app.use(routes);
 
-app.listen(process.env.PORT | PORT, () => {
+app.listen(process.env.PORT || PORT, () => {
     console.log(`backend is RUNNING on port: ${process.env.PORT}!`);
 })
