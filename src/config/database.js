@@ -1,8 +1,8 @@
 module.exports = {
     dialect: 'mysql',
-    host: 'nspro108.hostgator.com.br',
+    host: process.env.DB_URL,
     username: 'screen37_user',
-    password: 'U63qH9z5R2vXn7X',
+    password: process.env.USER_PASSWORD,
     database: 'dbquizz',
     define: {
         timestamps: true,
