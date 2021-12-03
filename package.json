@@ -2,13 +2,10 @@
   "name": "screening-programming-backend",
   "description": "backend",
   "version": "1.0.0",
-  "engines": {
-    "node": "14.16.0",
-    "yarn": "1.22.10"
-  },
+  "license": "ISC",
+  "author": "Pedro Henrique de Andrade",
   "scripts": {
-    "start": "nodemon index.js",
-    "start2": "node index.js"
+    "start": "nodemon index.js"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
