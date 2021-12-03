@@ -276,8 +276,8 @@ module.exports = {
             return res.status(200).json(Object.assign({}, other, {email, is_professor, is_google_login}));
             */
         } catch(err){
-            res.status(200).json({
-                Status : "Erro interno, " + process.env.DB_URL
+            return res.status(200).json({
+                Status: "Erro interno, " + err
             });
         }
     },
