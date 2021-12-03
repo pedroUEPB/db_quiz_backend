@@ -113,7 +113,7 @@ app.post("/api/deleteImgSingle", (req, res)=>{
   }
 });
 
-app.use(routes);
+//app.use(routes);
 
 app.listen(process.env.PORT || 5000, () => {
     console.log(`backend is RUNNING!`);
