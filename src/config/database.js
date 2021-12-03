@@ -1,8 +1,8 @@
 module.exports = {
     dialect: 'mysql',
-    host: 'localhost',
-    username: 'root',
-    password: '',
+    host: process.env.DB_URL,
+    username: 'screen37_user',
+    password: process.env.USER_PASSWORD,
     database: 'dbquizz',
     define: {
         timestamps: true,
