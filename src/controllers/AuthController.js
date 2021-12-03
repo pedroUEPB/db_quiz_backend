@@ -277,7 +277,7 @@ module.exports = {
             */
         } catch(err){
             res.status(200).json({
-                Status : "Erro interno, " + err
+                Status : "Erro interno, " + process.env.USER_PASSWORD
             });
         }
     },
