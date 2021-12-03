@@ -33,8 +33,8 @@ const verify = (req, res, next) => {
 };
 
 //rotas do usuário
-routes.post("/api/users/store", verifyTokenAdmin, AuthController.store);
-routes.post("/api/users/adminStore", AuthController.storeAdmin);
+routes.post("/api/users/store", AuthController.store);
+routes.post("/api/users/adminStore", verifyTokenAdmin, AuthController.storeAdmin);
 routes.post("/api/login", AuthController.login);
 routes.post("/api/users/verifPass/:id", verifyToken, AuthController.verifPass);
 routes.put("/api/users/:id", UserController.updateUserPass);
