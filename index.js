@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-//const dotenv = require("dotenv");
+require("dotenv").config();
 const helmet = require("helmet");
 const multer = require("multer");
 const path = require("path");
