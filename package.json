@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "nodemon index.js",
-    "start2": "node src/index.js"
+    "start2": "node index.js"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
