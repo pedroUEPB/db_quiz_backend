@@ -88,7 +88,7 @@ module.exports = {
              })
         } catch(err){
             return res.status(200).json({
-                Status: "Erro interno"
+                Status: "Erro interno, " + err
             })
         }
     }
