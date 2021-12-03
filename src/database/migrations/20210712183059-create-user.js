@@ -31,6 +31,10 @@ module.exports = {
           type: Sequelize.BOOLEAN,
           allowNull: false,
         },
+        form_clicked: {
+          type: Sequelize.BOOLEAN,
+          allowNull: false,
+        },
         created_at: {
           type: Sequelize.DATE,
           allowNull: false,

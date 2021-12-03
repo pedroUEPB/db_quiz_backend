@@ -13,6 +13,8 @@ const Admin = require("../models/Admin");
 const Questao = require("../models/Questao");
 const Resposta = require("../models/Resposta");
 const QuizzTurma = require("../models/QuizzTurma");
+const RefreshToken = require("../models/RefreshToken");
+const Turma_Aluno_Quiz = require("../models/TurmaAlunoQuiz");
 
 const connection = new Sequelize(dbConfig);
 
@@ -28,6 +30,8 @@ TurmaAluno.Init(connection);
 Questao.Init(connection);
 Resposta.Init(connection);
 QuizzTurma.Init(connection);
+Turma_Aluno_Quiz.Init(connection);
+RefreshToken.Init(connection);
 
 User.associate(connection.models);
 Professor.associate(connection.models);
@@ -40,6 +44,7 @@ TurmaAluno.associate(connection.models);
 Questao.associate(connection.models);
 Resposta.associate(connection.models);
 QuizzTurma.associate(connection.models);
+Turma_Aluno_Quiz.associate(connection.models);
 
 
 module.exports = connection;

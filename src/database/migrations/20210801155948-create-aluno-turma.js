@@ -23,26 +23,6 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      authorized:{
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-      },
-      quizz1_finished:{
-        type: Sequelize.BOOLEAN,
-        allowNull: false
-      },
-      quizz2_finished:{
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-      },
-      quizz3_finished:{
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-      },
-      quizz4_finished:{
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

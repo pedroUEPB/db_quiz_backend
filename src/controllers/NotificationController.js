@@ -50,10 +50,11 @@ module.exports = {
                         turma_id: convite.turma_id,
                         aluno_id: convite.aluno_id,
                     }
-                    await TurmaAluno.create(aluno);
+                    const turmaA = await TurmaAluno.create(aluno);
                     await convite.destroy();
                     return res.status(200).json({
-                        Status: "Convite aceito!"
+                        Status: "Convite aceito!",
+                        turmaA
                     })
                 } else {
                     await convite.destroy();

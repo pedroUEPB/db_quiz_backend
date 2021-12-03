@@ -12,7 +12,7 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      register_count: {
+      register_finished: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
       },

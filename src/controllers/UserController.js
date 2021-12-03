@@ -1,14 +1,28 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const Admin = require("../models/Admin");
 const Professor = require("../models/Professor");
 const Aluno = require("../models/Aluno");
 const TurmaAluno = require("../models/TurmaAluno");
 const Notification = require("../models/Notification");
 
+const jwt = require("jsonwebtoken");
+const generateAccessToken = (user) => {
+    return jwt.sign({ 
+        id: user.id,
+        is_professor: user.is_professor,
+        is_admin: user.is_admin,
+        register_finished: user.register_finished, 
+        profile_picture: user.profile_picture
+    }, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+};
+
 module.exports = {
     //pegar dados
     async index(req, res){
-        const id = req.query.id;
+        const id = req.params.id;
         const email = req.query.email;
         try{
             const user = id 
@@ -17,14 +31,102 @@ module.exports = {
             const { password, updated_at, ...other } = user.dataValues;
             if(user.is_professor){
                 const professor = await Professor.findByPk(id);
-                const { username, profile_picture, ...otherP } = professor.dataValues;
-                return res.status(200).json(Object.assign({}, other, {username, profile_picture}));
+                const { register_finished, matricula, username, profile_picture, birthday, gender, periode, city, state, institute, ...otherP } = professor;
+            return res.status(200).json(Object.assign({}, other, {register_finished, matricula, username, profile_picture, birthday, gender, periode, city, state, institute}));
+            }else if(user.is_aluno){
+                const aluno = await Aluno.findByPk(id, {
+                    include: {
+                        association: 'turmas'
+                    }
+                });
+                const { register_finished, matricula, username, profile_picture, birthday, gender, periode, city, state, institute, turmas, ...otherA } = aluno;
+                return res.status(200).json(Object.assign({}, other, {register_finished, matricula, username, profile_picture, birthday, gender, periode, city, state, institute, turmas}));
             }
-            const aluno = await Aluno.findByPk(id);
-            const { turma_id, register_complete, matricula, username, profile_picture, birthday, gender, periode, ...otherA } = aluno.dataValues;
-            return res.status(200).json(Object.assign({}, other, {turma_id, register_complete, matricula, username, profile_picture, birthday, gender, periode}));
+            const  admin = await Admin.findByPk(id);
+            const { username, profile_picture } = admin;
+            return res.status(200).json(Object.assign({}, other, {username, profile_picture}));
         } catch(err){
-            return res.status(400).json(err)
+            return res.status(200).json({
+                Status: "erro interno, " + err
+            })
+        }
+    },
+    //verificar se existe aluno baseado no email e se já tem uma turma
+    async userExist(req, res){
+        const email = req.params.email;
+        console.log(email);
+        try{
+            const user = await User.findOne({
+                where: {email: email},
+                include:{
+                    association: 'aluno',
+                    include: {
+                        association: 'turmas'
+                    }
+                }
+            });
+            if(user){
+                if(user.is_aluno){
+                    if(user.aluno.turmas.length > 0){
+                        return res.status(200).json({
+                            Status: "O aluno já esta alocado à uma turma"
+                        })
+                    }
+                    const id = user.id;
+                    return res.status(200).json({
+                        id
+                    })
+                }
+                return res.status(200).json({
+                    Status: "Email informado não pertence a um aluno"
+                })
+            }
+            return res.status(200).json({
+                Status: "Aluno não encontrado"
+            })
+        } catch(err){
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
+    //pegar todos os usuários
+    async indexAll(req, res){
+        const type = req.query.type;
+        try{
+            if(type){
+                const users = await User.findAll({
+                    where: { is_professor: true},
+                    attributes: ['id', 'email', 'is_professor', 'is_admin', 'is_aluno', 'is_google_login'],
+                    include:{
+                        association: type
+                    }
+                })
+                return res.status(200).json({
+                    users
+                })
+            }
+            const users = await User.findAll({
+                attributes: ['id', 'email', 'is_professor', 'is_admin', 'is_aluno','is_google_login'],
+                include: [
+                    {
+                        association: 'aluno'
+                    },
+                    {
+                        association: 'professor'
+                    },
+                    {
+                        association: 'admin'
+                    }
+                ]
+            });
+            return res.status(200).json({
+                users
+            })
+        } catch(err){
+            return res.status(200).json({
+                Status: "erro interno, " + err
+            })
         }
     },
     //atualizar dados
@@ -33,17 +135,19 @@ module.exports = {
 
         //parte de user
         const user = await User.findByPk(req.params.id);
-        if(newUserData){
+        if(newUserData.password){
             try{
                 const salt = await bcrypt.genSalt(10);
                 newUserData.password = await bcrypt.hash(newUserData.password, salt);
             } catch(err){
-                return res.status(400).json(err)
+                return res.status(200).json({
+                    Status: "Erro interno, " + err
+                })
             }
             const resultUser = await user.update(newUserData);
             if(!resultUser){
-                return res.status(400).json({
-                    Error: ["Não foi possível alterar os dados!"]
+                return res.status(200).json({
+                    Status: "Não foi possível alterar os dados!"
                 })
             }
         }
@@ -51,8 +155,18 @@ module.exports = {
         //parte professor
         const professor = await Professor.findByPk(req.params.id);
         if(professor){
-            const resultProfessor = professor.update(newUser);
-            return res.status(200).json("Usuário alterado!");
+            await professor.update(newUser);
+            const  accessToken = generateAccessToken({
+                id: newUser.id,
+                is_professor: newUser.is_professor,
+                email: newUser.email,
+                register_finished: newUser.register_finished,
+                is_admin: newUser.is_admin,
+            });
+            return res.status(200).json({
+                Status: "Usuário alterado!",
+                accessToken
+            });
         }
         return res.status(200).json("Usuário não alterado");
     },
@@ -60,20 +174,21 @@ module.exports = {
     async updateAluno(req, res) {
 
         const { newUserData, newUser} = req.body;
-
         //parte de user
         const user = await User.findByPk(req.params.id);
-        if(newUserData){
+        if(newUserData.password){
             try{
                 const salt = await bcrypt.genSalt(10);
                 newUserData.password = await bcrypt.hash(newUserData.password, salt);
             } catch(err){
-                return res.status(400).json(err)
+                return res.status(200).json({
+                    Status: "Erro ao alterar a senha, " + err
+                });
             }
             const resultUser = await user.update(newUserData);
             if(!resultUser){
-                return res.status(400).json({
-                    Error: ["Não foi possível alterar os dados!"]
+                return res.status(200).json({
+                    Status: "Não foi possível alterar os dados!"
                 })
             }
         }
@@ -81,23 +196,35 @@ module.exports = {
         //parte aluno
         const aluno = await Aluno.findByPk(req.params.id);
         if(aluno){
-            const resultAluno = aluno.update(newUser);
-            return res.status(200).json("Usuário alterado!");
+            await aluno.update(newUser);
+            const  accessToken = generateAccessToken({
+                id: newUser.id,
+                is_professor: newUser.is_professor,
+                email: newUser.email,
+                register_finished: newUser.register_finished,
+                is_admin: newUser.is_admin,
+            });
+            return res.status(200).json({
+                Status: "Usuário alterado!",
+                accessToken
+            });
         }
-        return res.status(200).json("Usuário não alterado");
+        return res.status(200).json({
+            Status: "Usuário não alterado"
+        });
     },
     //deletar usuário
     async delete(req, res){
         const user = await User.findByPk(req.params.id);
         if(!user){
-            return res.status(400).json({
-                Error: ["Usuário não encontrado!"]
+            return res.status(200).json({
+                Status: "Usuário não encontrado!"
             })
         }
         await user.destroy();
 
         return res.status(200).json({
-            Sucess: ["Usuário removido!"]
+            Status: "Usuário removido!"
         })
     },
     async indexResult(req, res){

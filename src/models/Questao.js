@@ -11,26 +11,6 @@ class  Questao extends Model{
                 type: Sequelize.STRING,
                 allowNull: true,
             },
-            resposta1: {
-                type: Sequelize.STRING,
-                allowNull: false,
-                defaultValue: "A",
-            },
-            resposta2: {
-                type: Sequelize.STRING,
-                allowNull: false,
-                defaultValue: "B",
-            },
-            resposta3: {
-                type: Sequelize.STRING,
-                allowNull: false,
-                defaultValue: "C",
-            },
-            resposta4: {
-                type: Sequelize.STRING,
-                allowNull: false,
-                defaultValue: "D",
-            },
             resposta_correta: {
                 type: Sequelize.STRING,
                 allowNull: false,
@@ -44,7 +24,7 @@ class  Questao extends Model{
 
     static associate(models){
         this.belongsTo(models.Quizz, { foreignKey: 'quizz_id', as: 'quizz' });
-        this.hasMany(models.Resposta, { foreignKey: 'questao_id', as: 'resposta_aluno'});
+        this.hasMany(models.Resposta, { foreignKey: 'questao_id', as: 'respostas'});
     }
     
 }

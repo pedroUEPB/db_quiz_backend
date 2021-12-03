@@ -8,26 +8,6 @@ class  TurmaAluno extends Model{
                 allowNull: false,
                 defaultValue: false,
             },
-            quizz1_finished: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-                defaultValue: false,
-            },
-            quizz2_finished: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-                defaultValue: false,
-            },
-            quizz3_finished: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-                defaultValue: false,
-            },
-            quizz4_finished: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-                defaultValue: false,
-            },
         }, {
             sequelize,
             tableName: 'turma-alunos'
@@ -39,6 +19,7 @@ class  TurmaAluno extends Model{
         this.belongsTo(models.Aluno, { foreignKey: 'aluno_id', as: 'aluno' })
         this.belongsTo(models.Turma, { foreignKey: 'turma_id', as: 'turma' })
         this.hasMany(models.Resposta, { foreignKey: 'turma_aluno_id', as: 'notas'})
+        this.hasMany(models.TurmaAlunoQuiz, { foreignKey: 'turma_aluno_id', as: 'finishedActivities'});
     }
     
 }

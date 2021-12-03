@@ -1,128 +1,193 @@
-const router = require("express").Router();
 const User = require("../models/User");
 const Professor = require("../models/Professor");
 const Aluno = require("../models/Aluno");
 const Admin = require("../models/Admin");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
+const generateAccessToken = (user) => {
+    return jwt.sign({ 
+        id: user.id,
+        is_professor: user.is_professor,
+        is_admin: user.is_admin,
+        is_aluno: user.is_aluno,
+        register_finished: user.register_finished, 
+        profile_picture: user.profile_picture,
+        form_clicked: user.form_clicked,
+    }, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+};
 
 module.exports = {
     //REGISTERS
-    //Professor
-    async storeProfessor(req, res) {
+    //store
+    async store(req, res){
         try{
+            //console.log(req.body);
             const userVerif = await User.findOne({ where: { email: req.body.email } });
             if(!userVerif){
+                let user;
                 if(!req.body.is_google_login){
-                    //gerar uma senha codificada
                     const salt = await bcrypt.genSalt(10);
                     const hashedPassword = await bcrypt.hash(req.body.password, salt);
-                    //criar usuário
-                    const newUser = new User({
+                    user = {
                         email: req.body.email,
                         password: hashedPassword,
+                        is_admin: req.body.is_admin,
+                        is_professor: req.body.is_professor,
+                        is_aluno: req.body.is_aluno,
+                        is_google_login: req.body.is_google_login,
+                    }
+                } else {
+                    user = {
+                        email: req.body.email,
                         is_professor: req.body.is_professor,
                         is_google_login: req.body.is_google_login,
                         is_admin: req.body.is_admin
-                    });
-                    const user = await newUser.save();
-                    const newProfessor = new Professor({
-                        id: user.id,
-                        username: req.body.username,
-                        profile_picture: req.body.profile_picture,
-                        register_count: req.body.register_count,
-                    })
-                    console.log(newProfessor);
-                    const professor = await newProfessor.save();
-                    return res.status(200).json({
-                        Status: ["Usuário cadastrado!"]
-                    });
+                    }
                 }
-                const newUser = new User({
-                    email: req.body.email,
-                    is_professor: req.body.is_professor,
-                    is_google_login: req.body.is_google_login,
-                    is_admin: req.body.is_admin
-                })
-                //salvar usuário
-                const user = await newUser.save();
-                const newProfessor = new Professor({
-                    id: user.id,
-                    username: req.body.username,
-                    profile_picture: req.body.profile_picture,
-                    register_count: req.body.register_count,
-                })
-                const professor = await newProfessor.save();
-                return res.status(200).json({
-                    Status: ["Usuário cadastrado!"]
+                if(req.body.is_professor){
+                    //user.professor.username = req.body.professor.username;
+                    const usr = await User.create({
+                            ...user, 
+                            professor:{ 
+                                username: req.body.professor.username
+                            }
+                        }, {
+                            include: {
+                                association: 'professor'
+                            }
+                    });
+                    if(usr){
+                        return res.status(200).json({
+                            Status: "Usuário cadastrado!"
+                        })
+                    }
+                } else if(req.body.is_aluno){
+                    const usr = await User.create({
+                        ...user, 
+                        aluno:{ 
+                            username: req.body.aluno.username
+                        }
+                    }, {
+                        include: {
+                            association: 'aluno'
+                        }
                 });
+                    if(usr){
+                        return res.status(200).json({
+                            Status: "Usuário cadastrado!"
+                        })
+                    }
+                }
+                const usr = await User.create({
+                    ...user, 
+                    admin:{ 
+                        username: req.body.admin.username
+                    }
+                }, {
+                    include: {
+                        association: 'admin'
+                    }
+            });
+                if(usr){
+                    return res.status(200).json({
+                        Status: "Usuário cadastrado!"
+                    })
+                }
             }
             return res.status(200).json({
-                Status : ["Email já cadastrado!"]
-            });
+                Status: "Email já cadastrado"
+            })
         } catch(err){
             return res.status(200).json({
-                Status: ["Erro interno"]
-            });
+                Status: "Erro interno, " + err
+            })
         }
     },
-    //Aluno
-    async storeAluno(req, res) {
+    async storeAdmin(req, res){
         try{
-            console.log(req.body);
+            //console.log(req.body);
             const userVerif = await User.findOne({ where: { email: req.body.email } });
             if(!userVerif){
+                let user;
                 if(!req.body.is_google_login){
-                    //gerar uma senha codificada
                     const salt = await bcrypt.genSalt(10);
                     const hashedPassword = await bcrypt.hash(req.body.password, salt);
-                    //criar usuário
-                    const newUser = new User({
+                    user = {
                         email: req.body.email,
                         password: hashedPassword,
+                        is_admin: req.body.is_admin,
+                        is_professor: req.body.is_professor,
+                        is_aluno: req.body.is_aluno,
+                        is_google_login: req.body.is_google_login,
+                    }
+                } else {
+                    user = {
+                        email: req.body.email,
                         is_professor: req.body.is_professor,
                         is_google_login: req.body.is_google_login,
                         is_admin: req.body.is_admin
-                    });
-                    const user = await newUser.save();
-                    const newAluno = new Aluno({
-                        id: user.id,
-                        username: req.body.username,
-                        profile_picture: req.body.profile_picture,
-                        register_count: req.body.register_count,
-                    })
-                    console.log(newAluno);
-                    const aluno = await newAluno.save();
-                    return res.status(200).json({
-                        Status: ["Usuário cadastrado!"]
-                    });
+                    }
                 }
-                const newUser = new User({
-                    email: req.body.email,
-                    is_professor: req.body.is_professor,
-                    is_google_login: req.body.is_google_login,
-                    is_admin: req.body.is_admin
-                })
-                //salvar usuário
-                const user = await newUser.save();
-                const newAluno = new Aluno({
-                    id: user.id,
-                    username: req.body.username,
-                    profile_picture: req.body.profile_picture,
-                    register_count: req.body.register_count,
-                })
-                const aluno = await newAluno.save();
-                return res.status(200).json({
-                    Status: ["Usuário cadastrado!"]
+                if(req.body.is_professor){
+                    //user.professor.username = req.body.professor.username;
+                    const usr = await User.create({
+                            ...user, 
+                            professor:{ 
+                                username: req.body.professor.username
+                            }
+                        }, {
+                            include: {
+                                association: 'professor'
+                            }
+                    });
+                    if(usr){
+                        return res.status(200).json({
+                            Status: "Usuário cadastrado!"
+                        })
+                    }
+                } else if(req.body.is_aluno){
+                    const usr = await User.create({
+                        ...user, 
+                        aluno:{ 
+                            username: req.body.aluno.username
+                        }
+                    }, {
+                        include: {
+                            association: 'aluno'
+                        }
                 });
+                    if(usr){
+                        return res.status(200).json({
+                            Status: "Usuário cadastrado!"
+                        })
+                    }
+                }
+                const usr = await User.create({
+                    ...user, 
+                    admin:{ 
+                        username: req.body.admin.username
+                    }
+                }, {
+                    include: {
+                        association: 'admin'
+                    }
+            });
+                if(usr){
+                    return res.status(200).json({
+                        Status: "Usuário cadastrado!"
+                    })
+                }
             }
             return res.status(200).json({
-                Status : ["Email já cadastrado!"]
-            });
+                Status: "Email já cadastrado"
+            })
         } catch(err){
             return res.status(200).json({
-                Status: ["Erro interno"]
-            });
+                Status: "Erro interno, " + err
+            })
         }
     },
     async login(req, res) {
@@ -136,79 +201,109 @@ module.exports = {
                 });
             }
             if(req.body.loginType === 0){
-                const validPass = await bcrypt.compare(req.body.password, user.password)
+                if(!user.is_google_login){
+                    const validPass = await bcrypt.compare(req.body.password, user.password)
+                    if(!validPass){
+                        return res.status(200).json({
+                            Status: "Senha incorreta!"
+                        });
+                    }
+                } else {
+                    return res.status(200).json({
+                        Status: "Email registrado com o google!"
+                    })
+                }
+            }
+            if(user.is_admin){
+                const admin = await Admin.findByPk(user.id);
+                const  accessToken = generateAccessToken({
+                    id: user.id,
+                    is_professor: user.is_professor,
+                    is_aluno: user.is_aluno,
+                    email: user.email,
+                    is_admin: user.is_admin,
+                });
+                return res.status(200).json({
+                    username: admin.username,
+                    profile_picture: admin.profile_picture,
+                    //is_admin: user.is_admin,
+                    accessToken
+                })
+            }
+            if(user.is_professor){
+                const professor = await Professor.findByPk(user.id);
+                const  accessToken = generateAccessToken({
+                    id: user.id,
+                    is_professor: user.is_professor,
+                    is_aluno: user.is_aluno,
+                    email: user.email,
+                    register_finished: professor.register_finished,
+                    is_admin: user.is_admin,
+                    form_clicked: user.form_clicked,
+                });
+                return res.status(200).json({
+                    username: professor.username,
+                    profile_picture: professor.profile_picture,
+                    //is_admin: user.is_admin,
+                    //is_professor: user.is_professor,
+                    //register_finished: professor.register_finished,
+                    accessToken
+                })
+            }
+            //precis lterar pra pegar dados de turma-aluno, turma e quizz-turma
+            const aluno = await Aluno.findByPk(user.id);
+            const  accessToken = generateAccessToken({
+                id: user.id,
+                is_professor: user.is_professor,
+                email: user.email,
+                is_aluno: user.is_aluno,
+                register_finished: aluno.register_finished,
+                is_admin: user.is_admin,
+                form_clicked: user.form_clicked,
+            });
+            return res.status(200).json({
+                username: aluno.username,
+                profile_picture: aluno.profile_picture,
+                //is_admin: user.is_admin,
+                //is_professor: user.is_professor,
+                //register_finished: aluno.register_finished,
+                accessToken
+            })
+
+            /*
+            const { email, is_professor, is_google_login, ...otherUser } = user.dataValues;
+            const { created_at, updated_at, ...other } = aluno.dataValues;
+            return res.status(200).json(Object.assign({}, other, {email, is_professor, is_google_login}));
+            */
+        } catch(err){
+            res.status(200).json({
+                Status : "Erro interno, " + err
+            });
+        }
+    },
+    async verifPass(req, res){
+        const { id } = req.params;
+        const { password } = req.body;
+        try{
+            const user = await User.findByPk(id);
+            if(user){
+                const validPass = await bcrypt.compare(password, user.password);
                 if(!validPass){
                     return res.status(200).json({
                         Status: "Senha incorreta!"
                     });
                 }
-            }
-            if(user.is_admin){
-                const admin = await Admin.findByPk(user.id);
-                const { password, created_at, updated_at, ...otherUser } = user.dataValues;
-                const { username, profile_picture, ...other } = admin.dataValues;
-                return res.status(200).json(Object.assign({}, otherUser, {username, profile_picture}));
-            }
-            if(user.is_professor){
-                const professor = await Professor.findByPk(user.id);
-                const { password, created_at, updated_at, ...otherUser } = user.dataValues;
-                const { username, profile_picture, ...other } = professor.dataValues;
-                return res.status(200).json(Object.assign({}, otherUser, {username, profile_picture}));
-                //res.status(200).json();
-            }
-            //precis lterar pra pegar dados de turma-aluno, turma e quizz-turma
-            const aluno = await Aluno.findByPk(user.id, {
-                include: { association: 'turmas'}
-            });
-            const { email, is_professor, is_google_login, ...otherUser } = user.dataValues;
-            const { created_at, updated_at, ...other } = aluno.dataValues;
-            return res.status(200).json(Object.assign({}, other, {email, is_professor, is_google_login}));
-        } catch(err){
-            res.status(200).json({
-                Status : ["Erro interno"]
-            });
-        }
-    },
-    //Admin
-    async storeAdmin(req, res) {
-        try{
-            const userVerif = await User.findOne({ where: { email: req.body.email } });
-            if(!userVerif){
-                //gerar uma senha codificada
-                const salt = await bcrypt.genSalt(10);
-                const hashedPassword = await bcrypt.hash(req.body.password, salt);
-                //criar usuário
-                const newUser = new User({
-                    email: req.body.email,
-                    password: hashedPassword,
-                    is_professor: req.body.is_professor,
-                    is_google_login: req.body.is_google_login,
-                    is_admin: req.body.is_admin
-                });
-                const user = await newUser.save();
-                const newAdmin = new Admin({
-                    id: user.id,
-                    username: req.body.username,
-                    profile_picture: req.body.profile_picture,
-                })
-                const admin = await newAdmin.save();
-                if(admin){
-                    return res.status(200).json({
-                        Status: ["Usuário cadastrado!"]
-                    });
-                }
                 return res.status(200).json({
-                    Status: ["Não foi possóvel criar o usuário"]
-                })
-            } else {
-                return res.status(200).json({
-                    Status: ["Email já cadastrado!"]
+                    Status: "Ok"
                 })
             }
+            return res.status(200).json({
+                Status: "Usuário não existe"
+            })
         } catch(err){
             return res.status(200).json({
-                Status : ["Erro interno"]
-            });
+                Status: "Erro interno, " + err
+            })
         }
     }
 }

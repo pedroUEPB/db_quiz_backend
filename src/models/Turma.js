@@ -20,7 +20,7 @@ class  Turma extends Model{
     }
 
     static associate(models){
-        this.belongsTo(models.User, { foreignKey: 'professor_id', as: 'user' });
+        this.belongsTo(models.Professor, { foreignKey: 'professor_id', as: 'professor' });
         this.hasMany(models.TurmaAluno, { foreignKey: 'turma_id', as: 'alunos' });
         this.hasMany(models.QuizzTurma, { foreignKey: 'turma_id', as: 'entrega' });
     }

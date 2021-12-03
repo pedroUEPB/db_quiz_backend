@@ -7,7 +7,7 @@ class  Aluno extends Model{
                 type: Sequelize.STRING,
                 allowNull: true,
             },
-            register_count: {
+            register_finished: {
               type: Sequelize.BOOLEAN,
               allowNull: false,
               defaultValue: false,

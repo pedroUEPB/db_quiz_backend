@@ -2,6 +2,9 @@ const Turma = require("../models/Turma");
 const Professor = require("../models/User");
 const TurmaAluno = require("../models/TurmaAluno");
 const QuizzTurma = require("../models/QuizzTurma");
+const Resposta = require("../models/Resposta");
+const TurmaAlunoQuiz = require("../models/TurmaAlunoQuiz");
+const Quizz = require("../models/Quizz");
 
 module.exports = {
     //create
@@ -54,18 +57,46 @@ module.exports = {
             })
         }
     },
-    /*
-    , {
-                include: { association: 'alunos' }
-            }
-    */
+    
+    async indexAllAdmin(req, res){
+        try{
+            const groups = await Turma.findAll({
+                include: [
+                    {
+                        association: 'professor'
+                    },
+                    {
+                        association: 'alunos',
+                        include: {
+                            association: 'aluno'
+                        }
+                    }
+                ]
+            });
+            return res.status(200).json({groups})
+        } catch(err){
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
     async index(req, res){
         const { turma_id } = req.params;
         try{
             const turma = await Turma.findByPk(turma_id, {
-                include: {association: 'alunos', 
-                    include: {association:'aluno', attributes: ['username', 'matricula']}
-                }
+                include: [
+                    {
+                        association: 'alunos',
+                        attributes: ['id'],
+                        include: {
+                            association:'aluno', 
+                            attributes: ['id', 'username', 'matricula', 'profile_picture']
+                        }
+                    },
+                    {
+                        association: 'professor'
+                    }
+            ]
             });
             if(turma){
                 return res.status(200).json(turma)
@@ -99,7 +130,7 @@ module.exports = {
             })
         }
     },
-    async indexAluno(req, res){
+    async indexAlunoWithNotas(req, res){
         const { id } = req.params;
         try{
             const aluno = await TurmaAluno.findOne({
@@ -110,7 +141,6 @@ module.exports = {
             });
             if(aluno){
                 return res.status(200).json({
-                    Status: "Aluno encontrado",
                     aluno
                 });
             }
@@ -123,8 +153,138 @@ module.exports = {
             })
         }
     },
+    async indexAluno(req, res){
+        const { id } = req.params;
+        try{
+            const aluno = await TurmaAluno.findOne({
+                where: {aluno_id: id},
+                include:[
+                    {
+                        association: 'finishedActivities'
+                    },
+                    {
+                        association: 'notas'
+                    }
+                ]
+            });
+            if(aluno){
+                return res.status(200).json({
+                    ...aluno.dataValues
+                });
+            }
+                return res.status(200).json({
+                    Status: "Aluno não encontrado"
+                })
+        } catch(err){
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
+    
+    async indexAlunoResults(req, res){
+        const { id } = req.params;
+        try{
+            const aluno = await TurmaAluno.findOne({
+                where: {aluno_id: id},
+                include:[
+                    {
+                        association: 'finishedActivities'
+                    },
+                    {
+                        association: 'notas',
+                        include:{
+                            association: 'questao'
+                        }
+                    }
+                ]
+            });
+            if(aluno){
+                const activities = await Quizz.findAll({
+                    include: {
+                        association: 'questoes'
+                    }
+                });
+                if(activities.length > 0){
+                    let result = [];
+                    let valor = activities.length + 1;
+                    if(aluno.notas.length > 0){
+                        for(let i=0;i<valor;i++){
+                            result.push({score: 0, percent: 0});
+
+                        }
+                        let count = 0;
+                        let maxQuestionCount = 0;
+                        for(let i=0;i<activities.length;i++){
+                            maxQuestionCount = maxQuestionCount + activities[i].question_count;
+                            for(let k=0;k<activities[i].questoes.length;k++){
+                                for(let j=0;j<aluno.notas.length;j++){
+                                    if(activities[i].questoes[k].id === aluno.notas[j].questao.id){
+                                        if(activities[i].questoes[k].resposta_correta === aluno.notas[j].resposta_questao){
+                                            //atividade
+                                            result[count].score = result[count].score + 1;
+                                            result[count].percent = parseInt((result[count].score/activities[i].question_count)*100);
+                                            //geral
+                                            result[valor - 1].score = result[valor - 1].score + 1;
+                                            result[valor - 1].percent = parseInt((result[valor - 1].score/maxQuestionCount)*100);
+                                        }
+                                    }
+                                }
+                            }
+                            count++;
+                        }
+                        return res.status(200).json(Object.assign({}, {resultados: result, atividades: activities, maxQuestion: maxQuestionCount}));
+                    }
+                    return res.status(200).json(Object.assign({}, {resultados: result, atividades: activities}));
+                }
+                return res.status(200).json({
+                    ...aluno.dataValues
+                });
+            }
+            return res.status(200).json({
+                Status: "Aluno não encontrado"
+            })
+        } catch(err){
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
+    //RESPOSTAS
+    async indexRespostas(req, res){
+        const { id, quiz_id } = req.params;
+        console.log(quiz_id);
+        try{
+            const notas = await Resposta.findAll({
+                include: [
+                    {
+                        association: 'aluno',
+                        attributes: ['id'],
+                        where: {turma_id: id}
+                    },
+                    {
+                        association: 'questao',
+                        attributes: ['resposta_correta'],
+                        where: {quizz_id: quiz_id}
+                    }
+                ],
+                attributes: ['id', 'resposta_questao']
+            });
+            if(notas){
+                return res.status(200).json(notas);
+            }
+            return res.status(200).json({
+                Status: "Nenhum dado encontrado"
+            })
+        } catch(err){
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
     async delete(req, res){
         const { id } = req.params;
+        console.log("aqui")
         try{
             const turma = await Turma.findByPk(id);
             if(turma){
@@ -186,6 +346,7 @@ module.exports = {
     },
     async deleteAluno(req, res){
         const { id } = req.params;
+        console.log("chegou aqui");
         try{
             const aluno = await TurmaAluno.findByPk(id);
             if(aluno){
@@ -220,6 +381,39 @@ module.exports = {
             }
             return res.status(200).json({
                 Status: "Aluno não encontrado"
+            })
+        } catch(err){
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
+    async updateOrCreateFinishAct(req, res){
+        const { id } = req.params;
+        try{
+            const turma_aluno = await TurmaAluno.findByPk(id);
+            if(turma_aluno){
+                const { quiz_id, turma_aluno_id, is_finished } = req.body;
+                const [fa, created] = await TurmaAlunoQuiz.findOrCreate({
+                    where: { quiz_id: quiz_id, turma_aluno_id: id},
+                    defaults: {
+                        quiz_id: quiz_id,
+                        turma_aluno_id: turma_aluno_id,
+                        is_finished: is_finished,
+                    }
+                })
+                if(created){
+                    return res.status(200).json({
+                        Status: "Atividade finalizada(creation)"
+                    })
+                }
+                await fa.save({is_finished: is_finished});
+                return res.status(200).json({
+                    Status: "Atividade finalizada(updating)"
+                })
+            }
+            return res.status(200).json({
+                Status: "Aluno não encontrado na turma"
             })
         } catch(err){
             return res.status(200).json({

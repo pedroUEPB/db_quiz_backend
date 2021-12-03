@@ -12,11 +12,19 @@ class  User extends Model{
                 type: Sequelize.BOOLEAN,
                 defaultValue: false, 
             },
+            is_aluno: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: false, 
+            },
             is_google_login:{
                 type: Sequelize.BOOLEAN,
                 defaultValue: false,
             },
             is_admin:{
+                type: Sequelize.BOOLEAN,
+                defaultValue: false,
+            },
+            form_clicked:{
                 type: Sequelize.BOOLEAN,
                 defaultValue: false,
             }

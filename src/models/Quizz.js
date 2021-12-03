@@ -6,7 +6,7 @@ class  Quizz extends Model{
             title: {
                 type: Sequelize.STRING,
                 allowNull: false,
-                defaultValue: "tipo de habilidade",
+                defaultValue: "Título da atividade",
             },
             quizz_img: {
                 type: Sequelize.STRING,
@@ -16,6 +16,10 @@ class  Quizz extends Model{
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 defaultValue: 0,
+            },
+            previous_activity_id: {
+                type: Sequelize.INTEGER,
+                allowNull: false
             }
         }, {
             sequelize

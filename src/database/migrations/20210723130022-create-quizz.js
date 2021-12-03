@@ -18,6 +18,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      question_count:{
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      previous_activity_id:{
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,

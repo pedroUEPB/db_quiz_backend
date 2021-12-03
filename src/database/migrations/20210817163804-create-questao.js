@@ -24,22 +24,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      resposta1:{
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      resposta2:{
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      resposta3:{
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      resposta4:{
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
       resposta_correta:{
         type: Sequelize.STRING,
         allowNull: false,
