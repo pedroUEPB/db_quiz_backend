@@ -1,14 +1,12 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const dotenv = require("dotenv");
+//const dotenv = require("dotenv");
 const helmet = require("helmet");
 const multer = require("multer");
 const path = require("path");
 const routes = require("./routes");
 const fs = require("fs");
-
-dotenv.config();
 
 require("./src/database");
 
