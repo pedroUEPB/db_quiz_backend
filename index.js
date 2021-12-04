@@ -114,8 +114,14 @@ app.post("/api/deleteImgSingle", (req, res)=>{
 });
 
 app.post("/api/convertImage", (req, res)=>{
-  const bitmat = fs.readFileSync(req.file, {encoding: 'base64'});
-  return bitmat.toString();
+  try{
+    const bitmat = fs.readFileSync(req.file, {encoding: 'base64'});
+    return bitmat.toString();
+  } catch(err){
+    return res.status(200).json({
+      Status: "Erro interno, " + err
+    })
+  }
 })
 
 app.use(routes);
