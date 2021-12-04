@@ -3,7 +3,8 @@ const User = require("../models/User");
 const Turma = require("../models/Turma");
 const Notification = require("../models/Notification");
 const TurmaAluno = require("../models/TurmaAluno");
-const bcrypt = require("bcrypt");
+//const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 
 module.exports = {
     async sendContact(req, res) {
@@ -127,8 +128,8 @@ module.exports = {
                             })
                         } else {
                             const newUser = user;
-                            const salt = await bcrypt.genSalt(10);
-                            newUser.password = await bcrypt.hash(data.pass, salt);
+                            const salt = await bcryptjs.genSalt(10);
+                            newUser.password = await bcryptjs.hash(data.pass, salt);
                             await user.save(newUser);
                             const notification = {
                                 turma_id: turma.id,
