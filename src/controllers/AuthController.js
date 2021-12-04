@@ -3,7 +3,7 @@ const Professor = require("../models/Professor");
 const Aluno = require("../models/Aluno");
 const Admin = require("../models/Admin");
 //const bcrypt = require("bcrypt");
-const bcryptjs = require("bcyptjs");
+const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const generateAccessToken = (user) => {
