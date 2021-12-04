@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "license": "ISC",
   "author": "Pedro Henrique de Andrade",
+  "engines": {
+    "node": "14.16.0"
+  },
   "scripts": {
     "start": "node index.js"
   },
