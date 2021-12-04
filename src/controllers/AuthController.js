@@ -205,7 +205,7 @@ module.exports = {
                     const validPass = await bcrypt.compare(req.body.password, user.password)
                     if(!validPass){
                         return res.status(200).json({
-                            Status: "Senha incorreta!"
+                            Status: "Senha incorreta! " + validPass
                         });
                     }
                 } else {
