@@ -31,7 +31,7 @@ module.exports = {
                 let user;
                 if(!req.body.is_google_login){
                     const salt = await bcryptjs.genSalt(10);
-                    const hashedPassword = await bcryptjs.hash(req.body.password, salt);
+                    const hashedPassword = await bcryptjs.hash(req.body.password, 10);
                     user = {
                         email: req.body.email,
                         password: hashedPassword,
@@ -203,8 +203,8 @@ module.exports = {
             }
             if(req.body.loginType === 0){
                 if(!user.is_google_login){
-                    const salt = await bcryptjs.genSalt(10);
-                    const hashedPassword = await bcryptjs.hash(req.body.password, salt);
+                    //const salt = await bcryptjs.genSalt(10);
+                    const hashedPassword = await bcryptjs.hash(req.body.password, 10);
                     const validPass = await bcryptjs.compare(hashedPassword, user.password)
                     if(!validPass){
                         return res.status(200).json({
