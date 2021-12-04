@@ -203,12 +203,10 @@ module.exports = {
             }
             if(req.body.loginType === 0){
                 if(!user.is_google_login){
-                    //const salt = await bcryptjs.genSalt(10);
-                    const hashedPassword = await bcryptjs.hash(req.body.password, 10);
-                    const validPass = await bcryptjs.compare(hashedPassword, user.password)
+                    const validPass = await bcryptjs.compare(req.body.password, user.password)
                     if(!validPass){
                         return res.status(200).json({
-                            Status: "Senha incorreta! " + hashedPassword + "-" + user.password
+                            Status: "Senha incorreta! " + req.body.password + "-" + user.password
                         });
                     }
                 } else {
