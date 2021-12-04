@@ -13,7 +13,7 @@ require("./src/database");
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use("/questions", express.static(path.join(__dirname, "public/questions")));
 
-app.use(cors());
+app.use(cors({origin: 'http://localhost:3000'}));
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
