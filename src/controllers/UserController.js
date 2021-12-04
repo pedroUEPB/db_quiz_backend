@@ -1,5 +1,6 @@
 const User = require("../models/User");
-const bcrypt = require("bcrypt");
+//const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const Admin = require("../models/Admin");
 const Professor = require("../models/Professor");
 const Aluno = require("../models/Aluno");
@@ -137,8 +138,8 @@ module.exports = {
         const user = await User.findByPk(req.params.id);
         if(newUserData.password){
             try{
-                const salt = await bcrypt.genSalt(10);
-                newUserData.password = await bcrypt.hash(newUserData.password, salt);
+                const salt = await bcryptjs.genSalt(10);
+                newUserData.password = await bcryptjs.hash(newUserData.password, salt);
             } catch(err){
                 return res.status(200).json({
                     Status: "Erro interno, " + err
@@ -178,8 +179,8 @@ module.exports = {
         const user = await User.findByPk(req.params.id);
         if(newUserData.password){
             try{
-                const salt = await bcrypt.genSalt(10);
-                newUserData.password = await bcrypt.hash(newUserData.password, salt);
+                const salt = await bcryptjs.genSalt(10);
+                newUserData.password = await bcryptjs.hash(newUserData.password, salt);
             } catch(err){
                 return res.status(200).json({
                     Status: "Erro ao alterar a senha, " + err
@@ -261,8 +262,8 @@ module.exports = {
             const user = await User.findByPk(id);
             if(user){
                 const newUser = user;
-                const salt = await bcrypt.genSalt(10);
-                newUser.password = await bcrypt.hash(password, salt);
+                const salt = await bcryptjs.genSalt(10);
+                newUser.password = await bcryptjs.hash(password, salt);
                 const result = await user.save(newUser);
                 if(result){
                     const notification = await Notification.findOne({where: {title: token}});
