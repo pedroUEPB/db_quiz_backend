@@ -113,6 +113,11 @@ app.post("/api/deleteImgSingle", (req, res)=>{
   }
 });
 
+app.post("/api/convertImage", (req, res)=>{
+  const bitmat = fs.readFileSync(req.file, {encoding: 'base64'});
+  return bitmat.toString();
+})
+
 app.use(routes);
 
 app.listen(process.env.PORT || 5000, () => {
