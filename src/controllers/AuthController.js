@@ -2,7 +2,8 @@ const User = require("../models/User");
 const Professor = require("../models/Professor");
 const Aluno = require("../models/Aluno");
 const Admin = require("../models/Admin");
-const bcrypt = require("bcrypt");
+//const bcrypt = require("bcrypt");
+const bcryptjs = require("bcyptjs");
 const jwt = require("jsonwebtoken");
 
 const generateAccessToken = (user) => {
@@ -29,8 +30,8 @@ module.exports = {
             if(!userVerif){
                 let user;
                 if(!req.body.is_google_login){
-                    const salt = await bcrypt.genSalt(10);
-                    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+                    const salt = await bcryptjs.genSalt(10);
+                    const hashedPassword = await bcryptjs.hash(req.body.password, salt);
                     user = {
                         email: req.body.email,
                         password: hashedPassword,
@@ -113,8 +114,8 @@ module.exports = {
             if(!userVerif){
                 let user;
                 if(!req.body.is_google_login){
-                    const salt = await bcrypt.genSalt(10);
-                    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+                    const salt = await bcryptjs.genSalt(10);
+                    const hashedPassword = await bcryptjs.hash(req.body.password, salt);
                     user = {
                         email: req.body.email,
                         password: hashedPassword,
@@ -202,7 +203,7 @@ module.exports = {
             }
             if(req.body.loginType === 0){
                 if(!user.is_google_login){
-                    const validPass = await bcrypt.compare(req.body.password, user.password)
+                    const validPass = await bcryptjs.compare(req.body.password, user.password)
                     if(!validPass){
                         return res.status(200).json({
                             Status: "Senha incorreta! " + validPass
@@ -287,7 +288,7 @@ module.exports = {
         try{
             const user = await User.findByPk(id);
             if(user){
-                const validPass = await bcrypt.compare(password, user.password);
+                const validPass = await bcryptjs.compare(password, user.password);
                 if(!validPass){
                     return res.status(200).json({
                         Status: "Senha incorreta!"
