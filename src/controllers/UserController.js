@@ -159,7 +159,9 @@ module.exports = {
             await professor.update(newUser);
             const  accessToken = generateAccessToken({
                 id: newUser.id,
-                is_professor: newUser.is_professor,
+                is_admin: newUserData.is_admin,
+                is_professor: newUserData.is_professor,
+                is_aluno: newUserData.is_aluno,
                 email: newUser.email,
                 register_finished: newUser.register_finished,
                 is_admin: newUser.is_admin,
@@ -200,10 +202,11 @@ module.exports = {
             await aluno.update(newUser);
             const  accessToken = generateAccessToken({
                 id: newUser.id,
-                is_professor: newUser.is_professor,
+                is_professor: newUserData.is_professor,
+                is_admin: newUserData.is_admin,
+                is_aluno: newUserData.is_aluno,
                 email: newUser.email,
                 register_finished: newUser.register_finished,
-                is_admin: newUser.is_admin,
                 profile_picture: newUser.profile_picture
             });
             return res.status(200).json({
