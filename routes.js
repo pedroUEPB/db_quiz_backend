@@ -90,7 +90,7 @@ routes.get("/api/quizzTurma/:turma_id", verifyTokenAuth, TurmaController.quizzTu
 routes.get("/api/quizzTurma/:turma_id/:quizz_id", verifyTokenAuth, TurmaController.dataEntrega);
 routes.get("/api/todasTurmas/:id", verifyTokenAuth, TurmaController.indexAll);
 routes.get("/api/notasAluno/:id", verifyTokenAuth, TurmaController.indexAlunoWithNotas);
-routes.get("/api/notas/:id/:quiz_id", verifyTokenAuth, TurmaController.indexRespostas);
+routes.get("/api/notas/:id/:quiz_id", verifyToken, TurmaController.indexRespostas);
 routes.get("/api/alunoTurma/:id", verifyTokenAuth, TurmaController.indexAluno);
 routes.get("/api/alunoResults/:id", verifyTokenAuth, TurmaController.indexAlunoResults);
 routes.delete("/api/turmas/:id", verifyToken, TurmaController.delete);
