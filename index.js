@@ -157,12 +157,12 @@ app.post("/api/saveQuestion", upload2.single("file"), async(req, res)=>{
       if(format !== "webp"){
         const r = await webp.cwebp(req.file.path, "public/questions/" + nm,"-q 80",logging="-v");
         const bf = fs.readFileSync("public/questions/" + nm);
-        fs.unlink("public/questions/" + req.file.filename, (err =>{
+        /*fs.unlink("public/questions/" + req.file.filename, (err =>{
           if(err) console.log(err)
           else{
             console.log("File deleted");
           }
-        }));
+        }));*/
       }
       return res.status(200).json(nm);
     }
