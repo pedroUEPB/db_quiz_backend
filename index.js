@@ -147,7 +147,6 @@ app.post("/api/saveImage", upload.single("file"), async(req, res)=>{
 app.post("/api/saveQuestion", upload2.single("file"), async(req, res)=>{
   try{
     if(req.file){
-      console.log("saving question");
       const vetor = req.file.filename.split(".");
       let nm = vetor[0];
       const format = vetor[vetor.length - 1];
@@ -157,13 +156,13 @@ app.post("/api/saveQuestion", upload2.single("file"), async(req, res)=>{
       nm = nm + ".webp";
       if(format !== "webp"){
         const r = await webp.cwebp(req.file.path, "public/questions/" + nm,"-q 80",logging="-v");
+        const bf = fs.readFileSync("public/questions/" + nm);
         fs.unlink("public/questions/" + req.file.filename, (err =>{
           if(err) console.log(err)
           else{
             console.log("File deleted");
           }
         }));
-        const bf = fs.readFileSync("public/questions/" + nm);
       }
       return res.status(200).json(nm);
     }
