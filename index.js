@@ -118,31 +118,24 @@ app.post("/api/deleteImgSingle", (req, res)=>{
 app.post("/api/saveImage", upload.single("file"), async(req, res)=>{
   try{
     if(req.file){
-      let nm = req.file.filename.split(".")[0];
+      const vetor = req.file.filename.split(".");
+      let nm = vetor[0];
+      const format = vetor[vetor.length - 1];
       if(nm === ""){
         nm = Date.now();
       }
-      const r = await webp.cwebp(req.file.path, "public/images/" + nm + ".webp","-q 80",logging="-v");
-      fs.unlink("public/images/" + req.file.filename, (err =>{
-        if(err) console.log(err)
-        else{
-          console.log("File deleted");
-        }
-      }));
-      console.log(r);
-      const bf = fs.readFileSync("public/images/" + nm + ".webp");
-      return res.status(200).json(bf);
-      /*result.then((response) => {
-        imgName = response;
-      });
-      /*const bf = fs.readFileSync("public/images/" + req.body.old);
-      fs.unlink("public/images/" + req.body.old, (err =>{
-        if(err) console.log(err)
-        else{
-          console.log("File deleted");
-        }
-      }));
-      return res.status(200).json(bf.toString('base64'));*/
+      nm = nm + ".webp";
+      if(format !== "webp"){
+        const r = await webp.cwebp(req.file.path, "public/images/" + nm,"-q 80",logging="-v");
+        fs.unlink("public/images/" + req.file.filename, (err =>{
+          if(err) console.log(err)
+          else{
+            console.log("File deleted");
+          }
+        }));
+        const bf = fs.readFileSync("public/images/" + nm);
+      }
+      return res.status(200).json(nm);
     }
     return res.status(200).json("Imagem não salva");
   } catch(err){
@@ -155,19 +148,24 @@ app.post("/api/saveQuestion", upload2.single("file"), async(req, res)=>{
   try{
     if(req.file){
       console.log("saving question");
-      let nm = req.file.filename.split(".")[0];
+      const vetor = req.file.filename.split(".");
+      let nm = vetor[0];
+      const format = vetor[vetor.length - 1];
       if(nm === ""){
         nm = Date.now();
       }
-      const r = await webp.cwebp(req.file.path, "public/questions/" + nm + ".webp","-q 80",logging="-v");
-      fs.unlink("public/questions/" + req.file.filename, (err =>{
-        if(err) console.log(err)
-        else{
-          console.log("File deleted");
-        }
-      }));
-      const bf = fs.readFileSync("public/questions/" + nm + ".webp");
-      return res.status(200).json(nm + ".webp");
+      nm = nm + ".webp";
+      if(format !== "webp"){
+        const r = await webp.cwebp(req.file.path, "public/questions/" + nm,"-q 80",logging="-v");
+        fs.unlink("public/questions/" + req.file.filename, (err =>{
+          if(err) console.log(err)
+          else{
+            console.log("File deleted");
+          }
+        }));
+        const bf = fs.readFileSync("public/questions/" + nm);
+      }
+      return res.status(200).json(nm);
     }
     return res.status(200).json("Imagem não salva");
   } catch(err){
