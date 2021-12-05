@@ -204,6 +204,7 @@ module.exports = {
                 email: newUser.email,
                 register_finished: newUser.register_finished,
                 is_admin: newUser.is_admin,
+                profile_picture: newUser.profile_picture
             });
             return res.status(200).json({
                 Status: "Usuário alterado!",
