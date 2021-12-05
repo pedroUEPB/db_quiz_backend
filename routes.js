@@ -97,6 +97,6 @@ routes.delete("/api/turmas/:id", verifyToken, TurmaController.delete);
 routes.delete("/api/turmas/deleteAluno/:id", verifyToken, TurmaController.deleteAluno);
 routes.put("/api/turmas/:id", verifyTokenAuth, TurmaController.update);
 routes.put("/api/alunoTurma/:id", verifyTokenAuth, TurmaController.updateTurmaAluno);
-routes.put("/api/alunoTurmaQuiz/:id", verifyTokenAuth, TurmaController.updateOrCreateFinishAct);
+routes.put("/api/alunoTurmaQuiz/:id", verifyToken, TurmaController.updateOrCreateFinishAct);
 
 module.exports = routes;
