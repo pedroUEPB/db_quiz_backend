@@ -223,6 +223,7 @@ module.exports = {
                     is_aluno: user.is_aluno,
                     email: user.email,
                     is_admin: user.is_admin,
+                    profile_picture: admin.profile_picture
                 });
                 return res.status(200).json({
                     username: admin.username,
@@ -241,6 +242,7 @@ module.exports = {
                     register_finished: professor.register_finished,
                     is_admin: user.is_admin,
                     form_clicked: user.form_clicked,
+                    profile_picture: professor.profile_picture
                 });
                 return res.status(200).json({
                     username: professor.username,
@@ -260,6 +262,7 @@ module.exports = {
                 is_aluno: user.is_aluno,
                 register_finished: aluno.register_finished,
                 is_admin: user.is_admin,
+                profile_picture: aluno.profile_picture,
                 form_clicked: user.form_clicked,
             });
             return res.status(200).json({

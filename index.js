@@ -7,6 +7,7 @@ const multer = require("multer");
 const path = require("path");
 const routes = require("./routes");
 const fs = require("fs");
+const webp = require("webp-converter");
 
 require("./src/database");
 
@@ -14,6 +15,7 @@ app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use("/questions", express.static(path.join(__dirname, "public/questions")));
 
 app.use(cors());
+app.options("*", cors());
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
@@ -32,7 +34,7 @@ const storage2 = multer.diskStorage({
     cb(null, "public/questions");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + file.originalname);
+    cb(null, req.body.name);
   },
 });
 
@@ -113,14 +115,80 @@ app.post("/api/deleteImgSingle", (req, res)=>{
   }
 });
 
-app.post("/api/convertImage", (req, res)=>{
+app.post("/api/saveImage", upload.single("file"), async(req, res)=>{
   try{
-    const bitmat = fs.readFileSync(req.file, {encoding: 'base64'});
-    return bitmat.toString();
+    if(req.file){
+      let nm = req.file.filename.split(".")[0];
+      if(nm === ""){
+        nm = Date.now();
+      }
+      const r = await webp.cwebp(req.file.path, "public/images/" + nm + ".webp","-q 80",logging="-v");
+      fs.unlink("public/images/" + req.file.filename, (err =>{
+        if(err) console.log(err)
+        else{
+          console.log("File deleted");
+        }
+      }));
+      console.log(r);
+      const bf = fs.readFileSync("public/images/" + nm + ".webp");
+      return res.status(200).json(bf);
+      /*result.then((response) => {
+        imgName = response;
+      });
+      /*const bf = fs.readFileSync("public/images/" + req.body.old);
+      fs.unlink("public/images/" + req.body.old, (err =>{
+        if(err) console.log(err)
+        else{
+          console.log("File deleted");
+        }
+      }));
+      return res.status(200).json(bf.toString('base64'));*/
+    }
+    return res.status(200).json("Imagem não salva");
   } catch(err){
     return res.status(200).json({
       Status: "Erro interno, " + err
     })
+  }
+});
+app.post("/api/saveQuestion", upload2.single("file"), async(req, res)=>{
+  try{
+    if(req.file){
+      console.log("saving question");
+      let nm = req.file.filename.split(".")[0];
+      if(nm === ""){
+        nm = Date.now();
+      }
+      const r = await webp.cwebp(req.file.path, "public/questions/" + nm + ".webp","-q 80",logging="-v");
+      fs.unlink("public/questions/" + req.file.filename, (err =>{
+        if(err) console.log(err)
+        else{
+          console.log("File deleted");
+        }
+      }));
+      const bf = fs.readFileSync("public/questions/" + nm + ".webp");
+      return res.status(200).json(nm + ".webp");
+    }
+    return res.status(200).json("Imagem não salva");
+  } catch(err){
+    return res.status(200).json({
+      Status: "Erro interno, " + err
+    })
+  }
+});
+
+app.post("/api/convertImage", (req, res)=>{
+  try{
+    const bf = fs.readFileSync("public/images/" + req.body.old);
+    fs.unlink("public/images/" + req.body.old, (err =>{
+        if(err) console.log(err)
+        else{
+          console.log("File deleted");
+        }
+      }));
+    return res.status(200).json(bf.toString('base64'));
+  } catch(err){
+    return res.status(200).json("Erro, " + err)
   }
 })
 

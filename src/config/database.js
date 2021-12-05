@@ -4,6 +4,10 @@ module.exports = {
     username: 'screen37_acesso',
     password: process.env.USER_PASSWORD,
     database: 'screen37_db_quiz',
+    /*host: 'localhost',
+    username: 'root',
+    password: '',
+    database: 'dbquizz',*/
     define: {
         timestamps: true,
         underscored: true,
