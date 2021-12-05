@@ -144,7 +144,7 @@ app.post("/api/saveImage", upload.single("file"), async(req, res)=>{
     })
   }
 });
-app.post("/api/saveQuestion", upload2.single("file"), async(req, res)=>{
+app.post("/api/questionSave", upload2.single("file"), async(req, res)=>{
   try{
     if(req.file){
       const vetor = req.file.filename.split(".");
