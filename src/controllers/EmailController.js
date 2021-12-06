@@ -1,15 +1,20 @@
 const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
+const config = require("../../config");
 const User = require("../models/User");
 const Turma = require("../models/Turma");
 const Notification = require("../models/Notification");
-const TurmaAluno = require("../models/TurmaAluno");
-//const bcrypt = require("bcrypt");
 const bcryptjs = require("bcryptjs");
+
+const OAuth2_client = new OAuth2(config.clientId, config.clientSecret);
+OAuth2_client.setCredentials({ refresh_token: config.refreshToken })
 
 module.exports = {
     async sendContact(req, res) {
         let data = req.body;
-        let transporter = nodemailer.createTransport({
+        const accessToken = OAuth2_client.getAccessToken();
+        /*let transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 465,
             secure: true,
@@ -20,10 +25,21 @@ module.exports = {
             tls: {
                 ciphers: 'SSLv3'
             }
-        });
+        });*/
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                type: 'OAuth2',
+                user: process.env.EMAIL,
+                clientId: config.clientId,
+                clientSecret: config.clientSecret,
+                refreshToken: config.refreshToken,
+                accessToken: accessToken
+            }
+        })
 
         let emailSend={
-            from: `Screening Programming Suporte`,
+            from: `Screening Programming Suporte <${process.env.EMAIL}>`,
             to: "programmingscreening@gmail.com",
             subject: data.subject,
             html: `
@@ -38,9 +54,9 @@ module.exports = {
             } else {
                 res.send("Mensagem enviada!");
             }
+            transporter.close();
         })
 
-        transporter.close();
     },
     //convite para turma
     async sendAlunoConvite(req, res) {
