@@ -95,7 +95,7 @@ routes.get("/api/alunoTurma/:id", verifyTokenAuth, TurmaController.indexAluno);
 routes.get("/api/alunoResults/:id", verifyTokenAuth, TurmaController.indexAlunoResults);
 routes.delete("/api/turmas/:id", verifyToken, TurmaController.delete);
 routes.delete("/api/turmas/deleteAluno/:id", verifyToken, TurmaController.deleteAluno);
-routes.put("/api/turmas/:id", verifyTokenAuth, TurmaController.update);
+routes.put("/api/turmas/:id", verifyToken, TurmaController.update);
 routes.put("/api/alunoTurma/:id", verifyTokenAuth, TurmaController.updateTurmaAluno);
 routes.put("/api/alunoTurmaQuiz/:id", verifyToken, TurmaController.updateOrCreateFinishAct);
 
