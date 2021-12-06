@@ -14,18 +14,6 @@ module.exports = {
     async sendContact(req, res) {
         let data = req.body;
         const accessToken = OAuth2_client.getAccessToken();
-        /*let transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 465,
-            secure: true,
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD
-            },
-            tls: {
-                ciphers: 'SSLv3'
-            }
-        });*/
         let transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -67,17 +55,20 @@ module.exports = {
             if(emails?.length > 0){
                 for(i=0; i<emails.length; i++){
                     const eml = new Promise((resolve, reject)=>{
+                        const accessToken = OAuth2_client.getAccessToken();
                         let transporter = nodemailer.createTransport({
-                            host: "smtp.gmail.com",
-                            port: 587,
-                            secure: true,
+                            service: 'gmail',
                             auth: {
+                                type: 'OAuth2',
                                 user: process.env.EMAIL,
-                                pass: process.env.PASSWORD
+                                clientId: config.clientId,
+                                clientSecret: config.clientSecret,
+                                refreshToken: config.refreshToken,
+                                accessToken: accessToken
                             }
-                        });
+                        })
                         const email = transporter.sendMail({
-                            from: `Screening Programming <programmingscreening@gmail.com>`,
+                            from: `Screening Programming <${process.env.EMAIL}>`,
                             to: emails[i].email,
                             subject: "Convite",
                             html: `<span>Convite para participar do grupo ${title}.
@@ -113,15 +104,18 @@ module.exports = {
     async recover(req, res){
         const data = req.body;
         //console.log(data);
+        const accessToken = OAuth2_client.getAccessToken();
         let transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: true,
+            service: 'gmail',
             auth: {
+                type: 'OAuth2',
                 user: process.env.EMAIL,
-                pass: process.env.PASSWORD
+                clientId: config.clientId,
+                clientSecret: config.clientSecret,
+                refreshToken: config.refreshToken,
+                accessToken: accessToken
             }
-        });
+        })
         //
         try{
             const user = await User.findOne({ where: { email: data.email }});
@@ -130,7 +124,7 @@ module.exports = {
                     const turma = await Turma.findOne();
                     //rota = http://localhost:3000/acceptRequest/:professor_id/:aluno_id
                     let emailSend={
-                        from: `Screening Programming <programmingscreening@gmail.com>`,
+                        from: `Screening Programming <${process.env.EMAIL}>`,
                         to: data.email,
                         subject: "Recuperar conta",
                         html: 
