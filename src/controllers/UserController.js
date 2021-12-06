@@ -11,10 +11,12 @@ const jwt = require("jsonwebtoken");
 const generateAccessToken = (user) => {
     return jwt.sign({ 
         id: user.id,
-        is_professor: user.is_professor,
         is_admin: user.is_admin,
+        is_professor: user.is_professor,
+        is_aluno: user.is_aluno,
         register_finished: user.register_finished, 
-        profile_picture: user.profile_picture
+        profile_picture: user.profile_picture,
+        form_clicked: user.form_clicked,
     }, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
@@ -159,12 +161,12 @@ module.exports = {
             await professor.update(newUser);
             const  accessToken = generateAccessToken({
                 id: newUser.id,
-                is_admin: newUserData.is_admin,
                 is_professor: newUserData.is_professor,
+                is_admin: newUserData.is_admin,
                 is_aluno: newUserData.is_aluno,
-                email: newUser.email,
                 register_finished: newUser.register_finished,
-                is_admin: newUser.is_admin,
+                profile_picture: newUser.profile_picture,
+                form_clicked: newUserData.form_clicked
             });
             return res.status(200).json({
                 Status: "Usuário alterado!",
@@ -202,12 +204,12 @@ module.exports = {
             await aluno.update(newUser);
             const  accessToken = generateAccessToken({
                 id: newUser.id,
-                is_professor: newUserData.is_professor,
                 is_admin: newUserData.is_admin,
+                is_professor: newUserData.is_professor,
                 is_aluno: newUserData.is_aluno,
-                email: newUser.email,
                 register_finished: newUser.register_finished,
-                profile_picture: newUser.profile_picture
+                profile_picture: newUser.profile_picture,
+                form_clicked: newUserData.form_clicked,
             });
             return res.status(200).json({
                 Status: "Usuário alterado!",

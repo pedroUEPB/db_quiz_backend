@@ -82,21 +82,9 @@ module.exports = {
                         })
                     }
                 }
-                const usr = await User.create({
-                    ...user, 
-                    admin:{ 
-                        username: req.body.admin.username
-                    }
-                }, {
-                    include: {
-                        association: 'admin'
-                    }
-            });
-                if(usr){
-                    return res.status(200).json({
-                        Status: "Usuário cadastrado!"
-                    })
-                }
+                return res.status(200).json({
+                    Status: "Tipo de usuário não disponível!"
+                })
             }
             return res.status(200).json({
                 Status: "Email já cadastrado"
