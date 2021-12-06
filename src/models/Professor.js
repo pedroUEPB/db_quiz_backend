@@ -19,7 +19,7 @@ class  Professor extends Model{
             profile_picture:{
                 type: Sequelize.STRING,
                 allowNull: true,
-                defaultValue: "noAvatar.png"
+                defaultValue: "noAvatar.webp"
             },
             birthday: {
                 type: Sequelize.DATE,

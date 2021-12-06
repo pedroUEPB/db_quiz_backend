@@ -12,10 +12,10 @@ module.exports = {
         let transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 587,
-            secure: false,
+            secure: true,
             auth: {
-                user: "programmingscreening@gmail.com",
-                pass: "SPS123456@"
+                user: process.env.EMAIL,
+                pass: process.env.PASSWORD
             }
         });
 
@@ -51,10 +51,10 @@ module.exports = {
                         let transporter = nodemailer.createTransport({
                             host: "smtp.gmail.com",
                             port: 587,
-                            secure: false,
+                            secure: true,
                             auth: {
-                                user: "programmingscreening@gmail.com",
-                                pass: "SPS123456@"
+                                user: process.env.EMAIL,
+                                pass: process.env.PASSWORD
                             }
                         });
                         const email = transporter.sendMail({
@@ -97,10 +97,10 @@ module.exports = {
         let transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 587,
-            secure: false,
+            secure: true,
             auth: {
-                user: "programmingscreening@gmail.com",
-                pass: "SPS123456@"
+                user: process.env.EMAIL,
+                pass: process.env.PASSWORD
             }
         });
         //

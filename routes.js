@@ -86,8 +86,8 @@ routes.delete("/api/quizz/:id", verifyTokenAdmin, QuizzController.delete);
 //rotas de turma
 routes.post("/api/turmas", verifyTokenAuth, TurmaController.store);
 routes.get("/api/turmas/:turma_id", verifyToken, TurmaController.index);
-routes.get("/api/quizzTurma/:turma_id", verifyTokenAuth, TurmaController.quizzTurma);
-routes.get("/api/quizzTurma/:turma_id/:quizz_id", verifyTokenAuth, TurmaController.dataEntrega);
+routes.get("/api/quizzTurma/:turma_id", verifyTokenAdmin, TurmaController.quizzTurma);
+routes.get("/api/quizzTurma/:turma_id/:quizz_id", verifyToken, TurmaController.dataEntrega);
 routes.get("/api/todasTurmas/:id", verifyTokenAuth, TurmaController.indexAll);
 routes.get("/api/notasAluno/:id", verifyTokenAuth, TurmaController.indexAlunoWithNotas);
 routes.get("/api/notas/:id/:quiz_id", verifyToken, TurmaController.indexRespostas);

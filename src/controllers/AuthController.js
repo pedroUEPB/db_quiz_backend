@@ -171,16 +171,11 @@ module.exports = {
                     admin:{ 
                         username: req.body.admin.username
                     }
-                }, {
+                    }, {
                     include: {
                         association: 'admin'
                     }
-            });
-                if(usr){
-                    return res.status(200).json({
-                        Status: "Usuário cadastrado!"
-                    })
-                }
+                });
             }
             return res.status(200).json({
                 Status: "Email já cadastrado"
