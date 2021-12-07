@@ -149,10 +149,7 @@ app.post("/api/saveImage", upload.single("file"), async(req, res)=>{
           return res.status(200).json(data);
         }
       });
-
-      //return res.status(200).json(nm);
     }
-    //return res.status(200).json("Imagem não salva");
   } catch(err){
     return res.status(200).json({
       Status: "Erro interno, " + err
