@@ -57,6 +57,7 @@ routes.get("/api/allUsers", verifyTokenAdmin, UserController.indexAll);
 routes.get("/api/allQuiz", verifyTokenAdmin, QuizzController.indexAllAdmin);
 routes.get("/api/allGroups", verifyTokenAdmin, TurmaController.indexAllAdmin);
 routes.post("/api/quiz", verifyTokenAdmin, QuizzController.store);
+routes.put("/api/usersAdmin/:id", verifyTokenAdmin, UserController.updateAdmin);
 
 //rotas de contato
 routes.post("/api/contato", EmailController.sendContact);

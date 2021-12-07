@@ -9,8 +9,8 @@ class  Quizz extends Model{
                 defaultValue: "Título da atividade",
             },
             quizz_img: {
-                type: Sequelize.STRING,
-                defaultValue: "no_img.png",
+                type: Sequelize.BLOB('long'),
+                allowNull: true
             },
             question_count: {
                 type: Sequelize.INTEGER,

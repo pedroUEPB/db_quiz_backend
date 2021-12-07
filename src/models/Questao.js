@@ -8,7 +8,7 @@ class  Questao extends Model{
                 allowNull: true,
             },
             pergunta_img: {
-                type: Sequelize.STRING,
+                type: Sequelize.BLOB('long'),
                 allowNull: true,
             },
             resposta_correta: {

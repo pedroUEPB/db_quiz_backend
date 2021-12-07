@@ -133,17 +133,33 @@ app.post("/api/saveImage", upload.single("file"), async(req, res)=>{
             console.log("File deleted");
           }
         }));
-        const bf = fs.readFileSync("public/images/" + nm);
       }
-      return res.status(200).json(nm);
+      fs.readFile("public/images/" + nm, 'base64', (err, data)=>{
+        if(err) console.log(err);
+        if(data){
+          return res.status(200).json(data);
+        }
+      });
+
+      //return res.status(200).json(nm);
     }
-    return res.status(200).json("Imagem não salva");
+    //return res.status(200).json("Imagem não salva");
   } catch(err){
     return res.status(200).json({
       Status: "Erro interno, " + err
     })
   }
 });
+
+app.get("/api/getImage", async(req, res)=>{
+  console.log(req.body);
+  fs.readFile("public/images/" + req.body.name, 'base64', (err, data)=>{
+    if(err) console.log(err);
+    res.writeHead(200, {'Content-Type': 'image/webp'});
+    res.end(data);
+  });
+})
+
 app.post("/api/questionSave", upload2.single("file"), async(req, res)=>{
   try{
     if(req.file){

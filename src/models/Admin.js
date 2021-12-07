@@ -5,9 +5,8 @@ class  Admin extends Model{
         super.init({
             username: Sequelize.STRING,
             profile_picture:{
-                type: Sequelize.STRING,
+                type: Sequelize.BLOB('long'),
                 allowNull: true,
-                defaultValue: "noAvatar.webp",
             }
         }, {
             sequelize
