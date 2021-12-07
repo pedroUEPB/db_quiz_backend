@@ -213,5 +213,5 @@ app.post("/api/convertImage", (req, res)=>{
 app.use(routes);
 
 app.listen(process.env.PORT || 5000, () => {
-    console.log(`backend is RUNNING!`);
+    console.log(`backend is RUNNING! ${process.env.PORT}`);
 })
