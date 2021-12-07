@@ -8,6 +8,7 @@ const path = require("path");
 const routes = require("./routes");
 const fs = require("fs");
 const webp = require("webp-converter");
+const bodyParser = require("body-parser");
 
 require("./src/database");
 
@@ -24,8 +25,8 @@ app.use((req, res, next) => {
 });
 
 app.use(helmet());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }))
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }))
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
