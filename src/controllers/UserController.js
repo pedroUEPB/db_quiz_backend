@@ -225,35 +225,40 @@ module.exports = {
 
         const { newUserData, newUser} = req.body;
         //parte de user
-        const user = await User.findByPk(req.params.id);
-        if(newUserData.password){
-            try{
+        try{
+            const user = await User.findByPk(req.params.id);
+            if(newUserData.password){
                 const salt = await bcryptjs.genSalt(10);
                 newUserData.password = await bcryptjs.hash(newUserData.password, salt);
-            } catch(err){
+                if(!newUserData.password){
+                    return res.status(200).json({
+                        Status: "Erro ao alterar a senha, " + err
+                    });
+                }
+                const resultUser = await user.update(newUserData);
+                if(!resultUser){
+                    return res.status(200).json({
+                        Status: "Não foi possível alterar os dados!"
+                    })
+                }
+            }
+            //final da parte de user
+            //parte admin
+            const admin = await Admin.findByPk(req.params.id);
+            if(admin){
+                await admin.update(newUser);
                 return res.status(200).json({
-                    Status: "Erro ao alterar a senha, " + err
+                    Status: "Usuário alterado!"
                 });
             }
-            const resultUser = await user.update(newUserData);
-            if(!resultUser){
-                return res.status(200).json({
-                    Status: "Não foi possível alterar os dados!"
-                })
-            }
-        }
-        //final da parte de user
-        //parte admin
-        const admin = await Admin.findByPk(req.params.id);
-        if(admin){
-            await admin.update(newUser);
             return res.status(200).json({
-                Status: "Usuário alterado!"
+                Status: "Usuário não alterado"
             });
+        } catch(err){
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
         }
-        return res.status(200).json({
-            Status: "Usuário não alterado"
-        });
     },
     //deletar usuário
     async delete(req, res){
