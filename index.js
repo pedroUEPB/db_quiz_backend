@@ -15,12 +15,12 @@ require("./src/database");
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use("/questions", express.static(path.join(__dirname, "public/questions")));
 
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
 	res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE');
   app.use(cors());
   next();
-});
+});*/
 
 app.use(helmet());
 app.use(cors());
