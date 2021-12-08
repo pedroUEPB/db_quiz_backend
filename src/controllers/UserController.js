@@ -56,9 +56,9 @@ module.exports = {
     //get User Photo
     async indexPhoto(req, res){
         const { id } = req.params.id;
-        console.log(req.params);
         try{
-            const user = await User.findByPk(id,{
+            const user = await User.findOne({
+                where: { id = id},
                 include: [
                     {
                         association: "admin",
