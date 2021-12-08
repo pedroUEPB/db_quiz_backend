@@ -40,7 +40,7 @@ routes.post("/api/users/verifPass/:id", verifyToken, AuthController.verifPass);
 routes.put("/api/users/:id", UserController.updateUserPass);
 routes.get("/api/users/:id", verifyTokenAuth, UserController.index);
 routes.delete("/api/users/:id", verifyTokenAdmin, UserController.delete);
-routes.get("/api/userPhoto/:id", verifyToken, UserController.indexPhoto);
+routes.post("/api/userPhoto", verifyToken, UserController.indexPhoto);
 
 
 //professor
