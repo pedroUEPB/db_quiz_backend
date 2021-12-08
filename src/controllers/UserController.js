@@ -14,8 +14,7 @@ const generateAccessToken = (user) => {
         is_admin: user.is_admin,
         is_professor: user.is_professor,
         is_aluno: user.is_aluno,
-        register_finished: user.register_finished, 
-        profile_picture: user.profile_picture,
+        register_finished: user.register_finished,
         form_clicked: user.form_clicked,
     }, process.env.SECRET_KEY, {
       expiresIn: "1d",

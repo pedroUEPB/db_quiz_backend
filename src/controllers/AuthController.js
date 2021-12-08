@@ -12,8 +12,7 @@ const generateAccessToken = (user) => {
         is_professor: user.is_professor,
         is_admin: user.is_admin,
         is_aluno: user.is_aluno,
-        register_finished: user.register_finished, 
-        profile_picture: user.profile_picture,
+        register_finished: user.register_finished,
         form_clicked: user.form_clicked,
     }, process.env.SECRET_KEY, {
       expiresIn: "1d",
@@ -197,6 +196,10 @@ module.exports = {
                         Status: "Email registrado com o google!"
                     })
                 }
+            } else if(user.password){
+                return res.status(200).json({
+                    Status: "Usuário não cadastrado com o google!"
+                })
             }
             if(user.is_admin){
                 const admin = await Admin.findByPk(user.id);
