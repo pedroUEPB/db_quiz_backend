@@ -156,7 +156,7 @@ app.post("/api/saveImage", upload.single("file"), async(req, res)=>{
   }
 });
 
-app.get("/api/getImage", async(req, res)=>{
+/*app.get("/api/getImage", async(req, res)=>{
   console.log(req.body);
   fs.readFile("public/images/" + req.body.name, 'base64', (err, data)=>{
     if(err) console.log(err);
@@ -164,6 +164,7 @@ app.get("/api/getImage", async(req, res)=>{
     res.end(data);
   });
 })
+
 
 app.post("/api/questionSave", upload2.single("file"), async(req, res)=>{
   try{
@@ -178,12 +179,11 @@ app.post("/api/questionSave", upload2.single("file"), async(req, res)=>{
       if(format !== "webp"){
         const r = await webp.cwebp(req.file.path, "public/questions/" + nm,"-q 80",logging="-v");
         const bf = fs.readFileSync("public/questions/" + nm);
-        /*fs.unlink("public/questions/" + req.file.filename, (err =>{
+        fs.unlink("public/questions/" + req.file.filename, (err =>{
           if(err) console.log(err)
           else{
             console.log("File deleted");
           }
-        }));*/
       }
       return res.status(200).json(nm);
     }
@@ -209,7 +209,7 @@ app.post("/api/convertImage", (req, res)=>{
     return res.status(200).json("Erro, " + err)
   }
 })
-
+*/
 app.use(routes);
 
 app.listen(process.env.PORT || 5000, () => {
