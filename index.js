@@ -145,6 +145,12 @@ app.post("/api/saveImage", upload.single("file"), async(req, res)=>{
       fs.readFile("public/images/" + nm, 'base64', (err, data)=>{
         if(err) console.log(err);
         if(data){
+          fs.unlink("public/images/" + nm, (err =>{
+            if(err) console.log(err)
+            else{
+              console.log("File deleted");
+            }
+          }));
           return res.status(200).json(data);
         }
       });
