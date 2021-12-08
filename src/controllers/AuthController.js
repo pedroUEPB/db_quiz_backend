@@ -34,17 +34,18 @@ module.exports = {
                     user = {
                         email: req.body.email,
                         password: hashedPassword,
+                        is_google_login: req.body.is_google_login,
                         is_admin: req.body.is_admin,
                         is_professor: req.body.is_professor,
                         is_aluno: req.body.is_aluno,
-                        is_google_login: req.body.is_google_login,
                     }
                 } else {
                     user = {
                         email: req.body.email,
-                        is_professor: req.body.is_professor,
                         is_google_login: req.body.is_google_login,
-                        is_admin: req.body.is_admin
+                        is_admin: req.body.is_admin,
+                        is_professor: req.body.is_professor,
+                        is_aluno: req.body.is_aluno,
                     }
                 }
                 if(req.body.is_professor){
