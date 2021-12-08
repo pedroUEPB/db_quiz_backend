@@ -58,7 +58,7 @@ module.exports = {
         const { id } = req.params.id;
         try{
             const user = await User.findOne({
-                where: { id = id},
+                where: { id: id},
                 include: [
                     {
                         association: "admin",
