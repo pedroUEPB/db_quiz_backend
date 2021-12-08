@@ -201,14 +201,15 @@ module.exports = {
         //parte aluno
         const aluno = await Aluno.findByPk(req.params.id);
         if(aluno){
-            const alunoU = await aluno.update(newUser);
+            await aluno.update(newUser);
+            const aluno2 = await Aluno.findByPk(req.params.id);
             const  accessToken = generateAccessToken({
                 id: newUser.id,
                 is_admin: newUserData.is_admin,
                 is_professor: newUserData.is_professor,
                 is_aluno: newUserData.is_aluno,
                 register_finished: newUser.register_finished,
-                profile_picture: alunoU.profile_picture,
+                profile_picture: aluno2.profile_picture,
                 form_clicked: newUserData.form_clicked,
             });
             return res.status(200).json({
