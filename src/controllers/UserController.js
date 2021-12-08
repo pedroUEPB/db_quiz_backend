@@ -53,6 +53,49 @@ module.exports = {
             })
         }
     },
+    //get User Photo
+    async indexPhoto(res, res){
+        const { id } = req.params;
+        try{
+            const user = await User.findByPk(id,{
+                include: [
+                    {
+                        association: "admin",
+                        attributes: ['id', 'profile_picture']
+                    },
+                    {
+                        association: "professor",
+                        attributes: ['id', 'profile_picture']
+                    },
+                    {
+                        association: "aluno",
+                        attributes: ['id', 'profile_picture']
+                    }
+                ]
+            });
+            if(user){
+                if(user.admin.id){
+                    return res.status(200).json(
+                        {profile_picture: user.admin.profile_picture}
+                    )
+                } else if(user.professor.id){
+                    return res.status(200).json(
+                        {profile_picture: user.professor.profile_picture}
+                    )
+                }
+                return res.status(200).json(
+                    {profile_picture: user.aluno.profile_picture}
+                )
+            }
+            return res.status(200).json({
+                Status: "Usuário não encontrado!"
+            })
+        } catch(err){
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
     //verificar se existe aluno baseado no email e se já tem uma turma
     async userExist(req, res){
         const email = req.params.email;
