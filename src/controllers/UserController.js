@@ -54,7 +54,7 @@ module.exports = {
         }
     },
     //get User Photo
-    async indexPhoto(res, res){
+    async indexPhoto(req, res){
         const { id } = req.params;
         try{
             const user = await User.findByPk(id,{
