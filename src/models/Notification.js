@@ -11,10 +11,6 @@ class  Notification extends Model{
             message: {
                 type: Sequelize.STRING,
                 allowNull: false
-            },
-            is_recover: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false
             }
         }, {
             sequelize
