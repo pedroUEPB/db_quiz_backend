@@ -122,7 +122,6 @@ module.exports = {
             if(user){
                 if(!user.is_google_login){
                     const turma = await Turma.findOne();
-                    //rota = http://localhost:3000/acceptRequest/:professor_id/:aluno_id
                     let emailSend={
                         from: `Screening Programming <${process.env.EMAIL}>`,
                         to: data.email,

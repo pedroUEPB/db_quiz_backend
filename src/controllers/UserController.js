@@ -351,13 +351,10 @@ module.exports = {
                 newUser.password = await bcryptjs.hash(password, salt);
                 const result = await user.save(newUser);
                 if(result){
-                    const notification = await Notification.findOne({where: {title: token}});
-                    if(notification){
-                        await notification.destroy();
-                        return res.status(200).json({
-                            Status: "Senha alterada"
-                        })
-                    }
+                    await Notification.destroy({where: {message: "trocar senha", aluno_id: id}});
+                    return res.status(200).json({
+                        Status: "Senha alterada"
+                    });
                 }
                 return res.status(200).json({
                     Status: "Não foi possível alterar a senha"
