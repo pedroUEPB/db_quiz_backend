@@ -146,7 +146,8 @@ module.exports = {
                     attributes: ['id', 'email', 'is_professor', 'is_admin', 'is_aluno', 'is_google_login'],
                     include:{
                         association: type
-                    }
+                    },
+                    order: ['id', 'DESC'],
                 })
                 return res.status(200).json({
                     users
