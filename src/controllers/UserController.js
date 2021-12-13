@@ -165,7 +165,7 @@ module.exports = {
                         association: 'admin'
                     }
                 ],
-                order: ['id', 'DESC'],
+                order: ['id'],
             });
             return res.status(200).json({
                 users
