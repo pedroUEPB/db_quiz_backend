@@ -156,13 +156,16 @@ module.exports = {
                 attributes: ['id', 'email', 'is_professor', 'is_admin', 'is_aluno','is_google_login'],
                 include: [
                     {
-                        association: 'aluno'
+                        association: 'aluno',
+                        attributes: ['id', 'username']
                     },
                     {
-                        association: 'professor'
+                        association: 'professor',
+                        attributes: ['id', 'username']
                     },
                     {
-                        association: 'admin'
+                        association: 'admin',
+                        attributes: ['id', 'username']
                     }
                 ],
                 order: ['id'],
