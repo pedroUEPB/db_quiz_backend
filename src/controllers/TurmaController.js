@@ -101,12 +101,12 @@ module.exports = {
             if(turma){
                 return res.status(200).json(turma)
             }
-            return res.status(400).json({
-                Err: ["Turma não encontrada!"]
+            return res.status(200).json({
+                Status: "Turma não encontrada!"
             })
         } catch(err){
             return res.status(200).json({
-                Err: ["Erro ao procurar turma"]
+                Status: "Erro ao procurar turma"
             })
         }
     },
