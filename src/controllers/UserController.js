@@ -147,7 +147,6 @@ module.exports = {
                     include:{
                         association: type
                     },
-                    order: [['id', 'DESC']],
                 })
                 return res.status(200).json({
                     users
@@ -165,7 +164,8 @@ module.exports = {
                     {
                         association: 'admin'
                     }
-                ]
+                ],
+                order: ['id', 'DESC'],
             });
             return res.status(200).json({
                 users
