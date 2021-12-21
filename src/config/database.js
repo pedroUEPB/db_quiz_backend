@@ -1,13 +1,13 @@
 module.exports = {
     dialect: 'mysql',
-    host: process.env.DB_URL,
+    /*host: process.env.DB_URL,
     username: 'screen37_acesso',
     password: process.env.USER_PASSWORD,
-    database: 'screen37_db_quiz',
-    /*host: 'localhost',
+    database: 'screen37_db_quiz',*/
+    host: 'localhost',
     username: 'root',
     password: '',
-    database: 'dbquizz',*/
+    database: 'dbquizz',
     define: {
         timestamps: true,
         underscored: true,

@@ -5,6 +5,8 @@ const QuizzTurma = require("../models/QuizzTurma");
 const Resposta = require("../models/Resposta");
 const TurmaAlunoQuiz = require("../models/TurmaAlunoQuiz");
 const Quizz = require("../models/Quizz");
+//const { sequelize } = require("../models/Turma");
+const sequelize = require("sequelize");
 
 module.exports = {
     //create
@@ -183,9 +185,43 @@ module.exports = {
     },
     
     async indexAlunoResults(req, res){
+        //id do aluno não da turma_aluno
         const { id } = req.params;
         try{
-            const aluno = await TurmaAluno.findOne({
+            const aluno = await TurmaAluno.findOne({ where: {aluno_id: id} });
+            if(aluno){
+                const resultados = await Quizz.findAll({
+                    attributes: [
+                        'title', 'question_count',
+                        [
+                            sequelize.fn('SUM', 
+                                sequelize.where(
+                                    sequelize.col('questoes.respostas.resposta_questao'),
+                                    sequelize.col('questoes.resposta_correta'))
+                            ), 
+                            'acertos'
+                        ]
+                    ],
+                    include: {
+                        association:
+                            'questoes',
+                            attributes: [],
+                            include: {
+                                association: 'respostas',
+                                attributes: [],
+                                where: { turma_aluno_id: aluno.id }
+                            }
+                        
+                    },
+                    group: ['id'],
+                    order: ['id']
+                })
+                return res.status(200).json(resultados);
+            }
+            return res.status(200).json({
+                Status: "Aluno não encontrado"
+            })
+            /*const aluno = await TurmaAluno.findOne({
                 where: {aluno_id: id},
                 include:[
                     {
@@ -243,7 +279,7 @@ module.exports = {
             }
             return res.status(200).json({
                 Status: "Aluno não encontrado"
-            })
+            })*/
         } catch(err){
             return res.status(200).json({
                 Status: "Erro interno, " + err
