@@ -103,7 +103,7 @@ module.exports = {
     },
     async recover(req, res){
         const data = req.body;
-        console.log(data);
+        //console.log(data);
         const accessToken = OAuth2_client.getAccessToken();
         let transporter = nodemailer.createTransport({
             service: 'gmail',
