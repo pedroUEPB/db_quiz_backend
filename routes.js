@@ -69,7 +69,7 @@ routes.get("/api/allNotifications/:id", verifyTokenAuth, NotificationController.
 routes.get("/api/notifications/:id", verifyToken, NotificationController.index);
 routes.get("/api/notification/:token/:id", NotificationController.indexOne);
 routes.put("/api/notifications/:id", NotificationController.update);
-routes.post("/api/recover", EmailController.recover);
+routes.post("/api/recoverAccount", EmailController.recover);
 
 //rotas de quizz
 routes.post("/api/quizz/:quizz_id/:turma_id", verifyTokenAuth, QuizzController.storeDateEntrega);
