@@ -252,13 +252,9 @@ module.exports = {
     async indexAllAdmin(req, res){
         try{
             const activities = await Quizz.findAll({
-                include: {
-                    association: 'questoes'
-                }
+                attributes: ['id', 'title', 'quizz_img']
             });
-            return res.status(200).json({
-                activities
-            })
+            return res.status(200).json(activities);
         } catch(err){
             return res.status(200).json({
                 Status: "Erro interno, " + err
