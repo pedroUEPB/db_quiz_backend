@@ -51,7 +51,7 @@ module.exports = {
                         aluno_id: convite.aluno_id,
                     }
                     const turmaA = await TurmaAluno.create(aluno);
-                    await convite.destroy();
+                    await Notification.destroy({ where: { aluno_id: convite.aluno_id }});
                     return res.status(200).json({
                         Status: "Convite aceito!",
                         turmaA
@@ -64,7 +64,7 @@ module.exports = {
                 }
             } else {
                 return res.status(200).json({
-                    Status: "erro"
+                    Status: "Convite não encontrado!"
                 })
             }
         } catch(err){
