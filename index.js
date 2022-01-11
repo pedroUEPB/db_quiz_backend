@@ -38,7 +38,7 @@ const storage = multer.diskStorage({
     },
 });
 
-const storage2 = multer.diskStorage({
+/*const storage2 = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/questions");
   },
@@ -54,10 +54,10 @@ const storage3 = multer.diskStorage({
     filename: (req, file, cb) => {
       cb(null, req.body.name);
     },
-});
+});*/
 
 const upload = multer({storage: storage});
-app.post("/api/uploadUserImg", upload.single("file"), (req, res) => {
+/*app.post("/api/uploadUserImg", upload.single("file"), (req, res) => {
   try{
     if(req.body.old){
       fs.unlink("public/images/" + req.body.old, (err =>{
@@ -122,7 +122,7 @@ app.post("/api/deleteImgSingle", (req, res)=>{
       Status: "Erro interno, " + err
     })
   }
-});
+});*/
 
 app.post("/api/saveImage", upload.single("file"), async(req, res)=>{
   try{
