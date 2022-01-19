@@ -127,7 +127,7 @@ module.exports = {
                         to: data.email,
                         subject: "Recuperar conta",
                         html: 
-                        `<span>Email de recuperação de conta, para alterar sua senha acesse o <a href="www.screeningprograaming.com/changePass/${data.token}/${user.id}" >Link</a> para alterar sua senha.
+                        `<span>Email de recuperação de conta, para alterar sua senha acesse o <a href="www.screeningprogramming.com/changePass/${data.token}/${user.id}" >Link</a> para alterar sua senha.
                         </span>
                         
                         `
