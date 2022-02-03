@@ -289,14 +289,17 @@ module.exports = {
     //RESPOSTAS
     async indexRespostas(req, res){
         const { id, quiz_id } = req.params;
-        console.log(quiz_id);
         try{
             const notas = await Resposta.findAll({
                 include: [
                     {
                         association: 'aluno',
                         attributes: ['id'],
-                        where: {turma_id: id}
+                        where: {turma_id: id},
+                        include: {
+                            association: 'aluno',
+                            attributes: ['id', 'username', 'matricula']
+                        }
                     },
                     {
                         association: 'questao',
