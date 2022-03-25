@@ -209,7 +209,7 @@ module.exports = {
             return res.status(200).json(answers)
         } catch(err){
             return res.status(200).json({
-                Status: "Não encontrado!"
+                Status: "Erro interno, " + err
             })
         }
     },
