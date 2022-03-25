@@ -216,7 +216,7 @@ module.exports = {
     async indexQuizTurma(req, res) {
         try{
             const { quiz_id, turma_id } = req.params;
-            const quizz = await Quizz.findByPk(quiz_id, {
+            const quizz = await Quizz.findAll({
                 attributes: [
                     'id', 
                     'previous_activity_id',
@@ -231,6 +231,7 @@ module.exports = {
                         'hits'
                     ]*/
                 ],
+                where: { id: quiz_id },
                 include: {
                     association: 'questoes',
                     attributes: [
