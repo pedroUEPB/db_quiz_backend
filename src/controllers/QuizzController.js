@@ -193,10 +193,6 @@ module.exports = {
                                 sequelize.col('questoes.resposta_correta'))
                         ), 
                         'hits'
-                    ],
-                    [
-                        sequelize.fn('COUNT', sequelize.col('questoes.respostas.id')),
-                        'answers_number'
                     ]
                 ],
                 include: {
@@ -204,7 +200,43 @@ module.exports = {
                     attributes: [
                         'id', 
                         'pergunta_img',
-                        'resposta_correta'
+                        'resposta_correta',
+                        [
+                            sequelize.fn('SUM',
+                                sequelize.where(
+                                    sequelize.col('respostas.resposta_questao'),
+                                    'A'
+                                )
+                            ),
+                            'a_count'
+                        ],
+                        [
+                            sequelize.fn('SUM',
+                                sequelize.where(
+                                    sequelize.col('respostas.resposta_questao'),
+                                    'B'
+                                )
+                            ),
+                            'b_count'
+                        ],
+                        [
+                            sequelize.fn('SUM',
+                                sequelize.where(
+                                    sequelize.col('respostas.resposta_questao'),
+                                    'C'
+                                )
+                            ),
+                            'c_count'
+                        ],
+                        [
+                            sequelize.fn('SUM',
+                                sequelize.where(
+                                    sequelize.col('respostas.resposta_questao'),
+                                    'D'
+                                )
+                            ),
+                            'd_count'
+                        ]
                     ],
                     include: {
                         association: 'respostas',
