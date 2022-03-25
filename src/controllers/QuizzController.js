@@ -177,7 +177,43 @@ module.exports = {
             })
         }
     },
-    async indexQuizTurma(req, res) {
+    async indexTurma(req, res){
+        try{
+            const { quiz_id, turma_id } = req.params;
+            const answers = await Resposta.findAll({
+                attributes: [
+                    'id',
+                    'resposta_questao'
+                ],
+                include: [
+                    {
+                        association: 'aluno',
+                        attributes: ['id', 'turma_id'],
+                        where: {turma_id: turma_id}
+                    },
+                    {
+                        association: 'questao',
+                        include: {
+                            association: 'quizz',
+                            attributes: [
+                                'id', 
+                                'previous_activity_id',
+                                'question_count',
+                                'title'
+                            ],
+                            where: { id: quiz_id }
+                        }
+                    }
+                ]
+            })
+            return res.status(200).json(answers)
+        } catch(err){
+            return res.status(200).json({
+                Status: "Não encontrado!"
+            })
+        }
+    },
+    async indexQuizTurma2(req, res) {
         try{
             const { quiz_id, turma_id } = req.params;
             const quizz = await Quizz.findByPk(quiz_id, {
@@ -200,7 +236,8 @@ module.exports = {
                     attributes: [
                         'id', 
                         'pergunta_img',
-                        'resposta_correta'/*,
+                        'resposta_correta'
+                        /*,
                         [
                             sequelize.fn('SUM',
                                 sequelize.where(
