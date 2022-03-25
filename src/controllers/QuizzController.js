@@ -192,7 +192,11 @@ module.exports = {
                                 sequelize.col('questoes.respostas.resposta_questao'),
                                 sequelize.col('questoes.resposta_correta'))
                         ), 
-                        'acertos'
+                        'hits'
+                    ],
+                    [
+                        sequelize.fn('SUM', sequelize.col('questoes.respostas')),
+                        'answers_number'
                     ]
                 ],
                 include: {
