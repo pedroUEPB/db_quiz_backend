@@ -221,7 +221,7 @@ module.exports = {
                     'id', 
                     'previous_activity_id',
                     'question_count',
-                    'title'/*,
+                    'title',
                     [
                         sequelize.fn('SUM', 
                             sequelize.where(
@@ -229,7 +229,7 @@ module.exports = {
                                 sequelize.col('questoes.resposta_correta'))
                         ), 
                         'hits'
-                    ]*/
+                    ]
                 ],
                 where: { id: quiz_id },
                 include: {
