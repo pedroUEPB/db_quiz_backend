@@ -195,7 +195,7 @@ module.exports = {
                         'hits'
                     ],
                     [
-                        sequelize.fn('SUM', sequelize.col('questoes.respostas')),
+                        sequelize.fn('SUM', sequelize.col('questoes.respostas.resposta_questao')),
                         'answers_number'
                     ]
                 ],
