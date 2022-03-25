@@ -177,7 +177,7 @@ module.exports = {
             })
         }
     },
-    async indexQuizTurma(req, res){
+    async indexQuizTurma2(req, res){
         try{
             const { quiz_id, turma_id } = req.params;
             const answers = await Resposta.findAll({
@@ -213,7 +213,7 @@ module.exports = {
             })
         }
     },
-    async indexQuizTurma2(req, res) {
+    async indexQuizTurma(req, res) {
         try{
             const { quiz_id, turma_id } = req.params;
             const quizz = await Quizz.findByPk(quiz_id, {
