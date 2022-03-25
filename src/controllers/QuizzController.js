@@ -177,51 +177,15 @@ module.exports = {
             })
         }
     },
-    async indexQuizTurma2(req, res){
-        try{
-            const { quiz_id, turma_id } = req.params;
-            const answers = await Resposta.findAll({
-                attributes: [
-                    'id',
-                    'resposta_questao'
-                ],
-                include: [
-                    {
-                        association: 'aluno',
-                        attributes: ['id', 'turma_id'],
-                        where: {turma_id: turma_id}
-                    },
-                    {
-                        association: 'questao',
-                        include: {
-                            association: 'quizz',
-                            attributes: [
-                                'id', 
-                                'previous_activity_id',
-                                'question_count',
-                                'title'
-                            ],
-                            where: { id: quiz_id }
-                        }
-                    }
-                ]
-            })
-            return res.status(200).json(answers)
-        } catch(err){
-            return res.status(200).json({
-                Status: "Erro interno, " + err
-            })
-        }
-    },
     async indexQuizTurma(req, res) {
         try{
             const { quiz_id, turma_id } = req.params;
-            const quizz = await Quizz.findAll({
+            const quizz = await Quizz.findByPk(quiz_id, {
                 attributes: [
                     'id', 
                     'previous_activity_id',
                     'question_count',
-                    'title',
+                    'title'/*,
                     [
                         sequelize.fn('SUM', 
                             sequelize.where(
@@ -229,9 +193,8 @@ module.exports = {
                                 sequelize.col('questoes.resposta_correta'))
                         ), 
                         'hits'
-                    ]
+                    ]*/
                 ],
-                where: { id: quiz_id },
                 include: {
                     association: 'questoes',
                     attributes: [
