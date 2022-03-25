@@ -2,6 +2,7 @@ const Quizz = require("../models/Quizz");
 const Questao = require("../models/Questao");
 const Resposta = require("../models/Resposta");
 const QuizzTurma = require("../models/QuizzTurma");
+const sequelize = require("sequelize");
 
 module.exports = {
     //CREATE QUIZZ
@@ -180,6 +181,20 @@ module.exports = {
         try{
             const { quiz_id, turma_id } = req.params;
             const quizz = await Quizz.findByPk(quiz_id, {
+                attributes: [
+                    'id', 
+                    'previous_activity_id',
+                    'question_count',
+                    'title',
+                    [
+                        sequelize.fn('SUM', 
+                            sequelize.where(
+                                sequelize.col('questoes.respostas.resposta_questao'),
+                                sequelize.col('questoes.resposta_correta'))
+                        ), 
+                        'acertos'
+                    ]
+                ],
                 include: {
                     association: 'questoes',
                     attributes: [

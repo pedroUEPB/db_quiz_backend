@@ -221,65 +221,6 @@ module.exports = {
             return res.status(200).json({
                 Status: "Aluno não encontrado"
             })
-            /*const aluno = await TurmaAluno.findOne({
-                where: {aluno_id: id},
-                include:[
-                    {
-                        association: 'finishedActivities'
-                    },
-                    {
-                        association: 'notas',
-                        include:{
-                            association: 'questao'
-                        }
-                    }
-                ]
-            });
-            if(aluno){
-                const activities = await Quizz.findAll({
-                    include: {
-                        association: 'questoes'
-                    }
-                });
-                if(activities.length > 0){
-                    let result = [];
-                    let valor = activities.length + 1;
-                    if(aluno.notas.length > 0){
-                        for(let i=0;i<valor;i++){
-                            result.push({score: 0, percent: 0});
-
-                        }
-                        let count = 0;
-                        let maxQuestionCount = 0;
-                        for(let i=0;i<activities.length;i++){
-                            maxQuestionCount = maxQuestionCount + activities[i].question_count;
-                            for(let k=0;k<activities[i].questoes.length;k++){
-                                for(let j=0;j<aluno.notas.length;j++){
-                                    if(activities[i].questoes[k].id === aluno.notas[j].questao.id){
-                                        if(activities[i].questoes[k].resposta_correta === aluno.notas[j].resposta_questao){
-                                            //atividade
-                                            result[count].score = result[count].score + 1;
-                                            result[count].percent = parseInt((result[count].score/activities[i].question_count)*100);
-                                            //geral
-                                            result[valor - 1].score = result[valor - 1].score + 1;
-                                            result[valor - 1].percent = parseInt((result[valor - 1].score/maxQuestionCount)*100);
-                                        }
-                                    }
-                                }
-                            }
-                            count++;
-                        }
-                        return res.status(200).json(Object.assign({}, {resultados: result, atividades: activities, maxQuestion: maxQuestionCount}));
-                    }
-                    return res.status(200).json(Object.assign({}, {resultados: result, atividades: activities}));
-                }
-                return res.status(200).json({
-                    ...aluno.dataValues
-                });
-            }
-            return res.status(200).json({
-                Status: "Aluno não encontrado"
-            })*/
         } catch(err){
             return res.status(200).json({
                 Status: "Erro interno, " + err
@@ -291,6 +232,7 @@ module.exports = {
         const { id, quiz_id } = req.params;
         try{
             const notas = await Resposta.findAll({
+                attributes: ['id', 'resposta_questao'],
                 include: [
                     {
                         association: 'aluno',
@@ -306,8 +248,7 @@ module.exports = {
                         attributes: ['resposta_correta'],
                         where: {quizz_id: quiz_id}
                     }
-                ],
-                attributes: ['id', 'resposta_questao']
+                ]
             });
             if(notas){
                 return res.status(200).json(notas);
