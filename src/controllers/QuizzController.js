@@ -204,7 +204,7 @@ module.exports = {
                         [
                             sequelize.fn('SUM',
                                 sequelize.where(
-                                    sequelize.col('respostas.resposta_questao'),
+                                    sequelize.col('questoes.respostas.resposta_questao'),
                                     'A'
                                 )
                             ),
@@ -213,7 +213,7 @@ module.exports = {
                         [
                             sequelize.fn('SUM',
                                 sequelize.where(
-                                    sequelize.col('respostas.resposta_questao'),
+                                    sequelize.col('questoes.respostas.resposta_questao'),
                                     'B'
                                 )
                             ),
@@ -222,7 +222,7 @@ module.exports = {
                         [
                             sequelize.fn('SUM',
                                 sequelize.where(
-                                    sequelize.col('respostas.resposta_questao'),
+                                    sequelize.col('questoes.respostas.resposta_questao'),
                                     'C'
                                 )
                             ),
@@ -231,7 +231,7 @@ module.exports = {
                         [
                             sequelize.fn('SUM',
                                 sequelize.where(
-                                    sequelize.col('respostas.resposta_questao'),
+                                    sequelize.col('questoes.respostas.resposta_questao'),
                                     'D'
                                 )
                             ),
