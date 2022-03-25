@@ -185,7 +185,7 @@ module.exports = {
                     'id', 
                     'previous_activity_id',
                     'question_count',
-                    'title',
+                    'title'/*,
                     [
                         sequelize.fn('SUM', 
                             sequelize.where(
@@ -193,14 +193,14 @@ module.exports = {
                                 sequelize.col('questoes.resposta_correta'))
                         ), 
                         'hits'
-                    ]
+                    ]*/
                 ],
                 include: {
                     association: 'questoes',
                     attributes: [
                         'id', 
                         'pergunta_img',
-                        'resposta_correta',
+                        'resposta_correta'/*,
                         [
                             sequelize.fn('SUM',
                                 sequelize.where(
@@ -236,7 +236,7 @@ module.exports = {
                                 )
                             ),
                             'd_count'
-                        ]
+                        ]*/
                     ],
                     include: {
                         association: 'respostas',
