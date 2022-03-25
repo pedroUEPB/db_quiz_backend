@@ -177,7 +177,7 @@ module.exports = {
             })
         }
     },
-    async indexTurma(req, res){
+    async indexQuizTurma(req, res){
         try{
             const { quiz_id, turma_id } = req.params;
             const answers = await Resposta.findAll({
