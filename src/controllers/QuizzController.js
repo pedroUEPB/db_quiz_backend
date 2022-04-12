@@ -160,6 +160,37 @@ module.exports = {
             })
         }
     },
+    // gets an activity to quizDemo
+    async indexQuizAluno(req, res){
+        console.log("-----")
+        try{
+            const { id, turma_aluno_id } = req.params;
+            const quiz = await Quizz.findByPk(id, {
+                include: {
+                    association: 'questoes',
+                    attributes: ['id'],
+                    include: {
+                        association: 'respostas',
+                        attributes: ['id', 'turma_aluno_id'],
+                        where: { turma_aluno_id: turma_aluno_id },
+                        limit: 1
+                    },
+                    limit: 1
+                },
+                attributes: ['id', 'previous_activity_id', 'question_count', 'quizz_img', 'title']
+            });
+            if(quiz){
+                return res.status(200).json(quiz)
+            }
+            return res.status(200).json({
+                Status: "Atividade não encontrada!"
+            })
+        } catch(err){
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
     async allActivities(req, res){
         try{
             const activities = await Quizz.findAll();
@@ -262,6 +293,128 @@ module.exports = {
             return res.status(200).json({
                 Status: ["Quizz não encontrado"]
             });
+        } catch(err){
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
+    async indexQuestionsAnswers(req, res){
+        try{
+            const { quiz_id, turma_id } = req.params;
+            console.log("#####" + quiz_id + ", " + turma_id + "#####")
+            const questions = await Questao.findAll({
+                where: { quizz_id: quiz_id},
+                attributes: [
+                    'pergunta_img',
+                    'resposta_correta',
+                    [
+                        sequelize.fn('SUM', 
+                            sequelize.where(
+                                sequelize.col('respostas.resposta_questao'),
+                                "A"
+                            )
+                        ), 
+                        'a_count'
+                    ],
+                    [
+                        sequelize.fn('SUM', 
+                            sequelize.where(
+                                sequelize.col('respostas.resposta_questao'),
+                                "B"
+                            )
+                        ), 
+                        'b_count'
+                    ],
+                    [
+                        sequelize.fn('SUM', 
+                            sequelize.where(
+                                sequelize.col('respostas.resposta_questao'),
+                                "C"
+                            )
+                        ), 
+                        'c_count'
+                    ],
+                    [
+                        sequelize.fn('SUM', 
+                            sequelize.where(
+                                sequelize.col('respostas.resposta_questao'),
+                                "D"
+                            )
+                        ), 
+                        'd_count'
+                    ],
+                ],
+                include: {
+                    association: 'respostas',
+                    attributes: [],
+                    include: {
+                        association: 'aluno',
+                        attributes: [],
+                        where: { turma_id: turma_id }
+                    }
+                },
+                group: ['id']
+            });
+            /*const answers = await Resposta.findAll({
+                include: [
+                    {
+                        association: 'questao',
+                        attributes: [
+                            'id', 
+                            'pergunta_img',
+                            'resposta_correta',
+                            [
+                                sequelize.fn('SUM',
+                                    sequelize.where(
+                                        sequelize.col('Resposta.resposta_questao'),
+                                        'A'
+                                    )
+                                ),
+                                'a_count'
+                            ],
+                            [
+                                sequelize.fn('SUM',
+                                    sequelize.where(
+                                        sequelize.col('Resposta.resposta_questao'),
+                                        'B'
+                                    )
+                                ),
+                                'b_count'
+                            ],
+                            [
+                                sequelize.fn('SUM',
+                                    sequelize.where(
+                                        sequelize.col('Resposta.resposta_questao'),
+                                        'C'
+                                    )
+                                ),
+                                'c_count'
+                            ],
+                            [
+                                sequelize.fn('SUM',
+                                    sequelize.where(
+                                        sequelize.col('Resposta.resposta_questao'),
+                                        'D'
+                                    )
+                                ),
+                                'd_count'
+                            ]
+                        ],
+                        where: { quizz_id: quiz_id}
+                    },
+                    {
+                        association: 'aluno',
+                        attributes: ['id', 'turma_id'],
+                        where: { turma_id: turma_id}
+                    }
+                ],
+                attributes: [
+                    'id', 
+                    'resposta_questao'
+                ]
+            })*/
+            return res.status(200).json(questions)
         } catch(err){
             return res.status(200).json({
                 Status: "Erro interno, " + err

@@ -76,9 +76,11 @@ routes.post("/api/quizz/:quizz_id/:turma_id", verifyTokenAuth, QuizzController.s
 routes.post("/api/quizz/questao", verifyTokenAdmin, QuizzController.storeQuestion);
 routes.put("/api/quizz/questao/:question_id", verifyTokenAdmin, QuizzController.updateQuestion);
 routes.get("/api/quizz/:id", verifyToken, QuizzController.index);
+routes.get("/api/quizz/:id/:turma_aluno_id", verifyToken, QuizzController.indexQuizAluno);
 routes.get("/api/quiz", verifyTokenAuth, QuizzController.allActivities);
 routes.get("/api/quizzAll/:turma_id", verifyToken, QuizzController.indexAll);
-routes.get("/api/respostasQuiz/:quiz_id/:turma_id", verifyToken, QuizzController.indexQuizTurma);
+//routes.get("/api/respostasQuiz/:quiz_id/:turma_id", verifyToken, QuizzController.indexQuizTurma);
+routes.get("/api/respostasQuiz/:quiz_id/:turma_id", verifyToken, QuizzController.indexQuestionsAnswers);
 routes.put("/api/quizTurma/:id", verifyTokenAdmin, QuizzController.updateQuizTurma);
 routes.put("/api/quiz/:id", verifyTokenAdmin, QuizzController.update);
 routes.post("/api/quizz/resposta", verifyToken, QuizzController.storeAnswer);
