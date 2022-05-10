@@ -46,5 +46,4 @@ Resposta.associate(connection.models);
 QuizzTurma.associate(connection.models);
 Turma_Aluno_Quiz.associate(connection.models);
 
-
 module.exports = connection;
