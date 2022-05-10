@@ -209,15 +209,9 @@ module.exports = {
                     is_professor: user.is_professor,
                     is_aluno: user.is_aluno,
                     email: user.email,
-                    is_admin: user.is_admin,
-                    profile_picture: admin.profile_picture
+                    is_admin: user.is_admin
                 });
-                return res.status(200).json({
-                    username: admin.username,
-                    profile_picture: admin.profile_picture,
-                    //is_admin: user.is_admin,
-                    accessToken
-                })
+                return res.status(200).json({accessToken})
             }
             if(user.is_professor){
                 const professor = await Professor.findByPk(user.id);
@@ -228,17 +222,9 @@ module.exports = {
                     email: user.email,
                     register_finished: professor.register_finished,
                     is_admin: user.is_admin,
-                    form_clicked: user.form_clicked,
-                    profile_picture: professor.profile_picture
+                    form_clicked: user.form_clicked
                 });
-                return res.status(200).json({
-                    username: professor.username,
-                    profile_picture: professor.profile_picture,
-                    //is_admin: user.is_admin,
-                    //is_professor: user.is_professor,
-                    //register_finished: professor.register_finished,
-                    accessToken
-                })
+                return res.status(200).json({accessToken})
             }
             //precis lterar pra pegar dados de turma-aluno, turma e quizz-turma
             const aluno = await Aluno.findByPk(user.id);
@@ -249,17 +235,9 @@ module.exports = {
                 is_aluno: user.is_aluno,
                 register_finished: aluno.register_finished,
                 is_admin: user.is_admin,
-                profile_picture: aluno.profile_picture,
                 form_clicked: user.form_clicked,
             });
-            return res.status(200).json({
-                username: aluno.username,
-                profile_picture: aluno.profile_picture,
-                //is_admin: user.is_admin,
-                //is_professor: user.is_professor,
-                //register_finished: aluno.register_finished,
-                accessToken
-            })
+            return res.status(200).json({accessToken})
 
             /*
             const { email, is_professor, is_google_login, ...otherUser } = user.dataValues;

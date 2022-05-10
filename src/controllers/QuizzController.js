@@ -162,7 +162,6 @@ module.exports = {
     },
     // gets an activity to quizDemo
     async indexQuizAluno(req, res){
-        console.log("-----")
         try{
             const { id, turma_aluno_id } = req.params;
             const quiz = await Quizz.findByPk(id, {
@@ -171,9 +170,8 @@ module.exports = {
                     attributes: ['id'],
                     include: {
                         association: 'respostas',
-                        attributes: ['id', 'turma_aluno_id'],
-                        where: { turma_aluno_id: turma_aluno_id },
-                        limit: 1
+                        attributes: ['turma_aluno_id'],
+                        where: { turma_aluno_id: turma_aluno_id }
                     },
                     limit: 1
                 },
