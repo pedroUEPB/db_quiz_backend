@@ -264,7 +264,6 @@ module.exports = {
     },
     async delete(req, res){
         const { id } = req.params;
-        console.log("aqui")
         try{
             const turma = await Turma.findByPk(id);
             if(turma){
@@ -326,7 +325,6 @@ module.exports = {
     },
     async deleteAluno(req, res){
         const { id } = req.params;
-        console.log("chegou aqui");
         try{
             const aluno = await TurmaAluno.findByPk(id);
             if(aluno){

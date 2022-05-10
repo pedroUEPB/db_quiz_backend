@@ -24,7 +24,6 @@ module.exports = {
     //store
     async store(req, res){
         try{
-            //console.log(req.body);
             const userVerif = await User.findOne({ where: { email: req.body.email } });
             if(!userVerif){
                 let user;
@@ -97,7 +96,6 @@ module.exports = {
     },
     async storeAdmin(req, res){
         try{
-            //console.log(req.body);
             const userVerif = await User.findOne({ where: { email: req.body.email } });
             if(!userVerif){
                 let user;

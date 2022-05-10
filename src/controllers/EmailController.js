@@ -76,7 +76,6 @@ module.exports = {
                             </span>
                             `
                         }, (error, response) => {
-                            console.log("aqui");
                             if (error) {
                                 console.log(error);
                                 resolve(false);
@@ -103,7 +102,6 @@ module.exports = {
     },
     async recover(req, res){
         const data = req.body;
-        //console.log(data);
         const accessToken = OAuth2_client.getAccessToken();
         let transporter = nodemailer.createTransport({
             service: 'gmail',

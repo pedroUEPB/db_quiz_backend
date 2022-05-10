@@ -6,7 +6,6 @@ module.exports = {
         const { turma_id, aluno_id } = req.params;
         const convite = await Convite.findOne({ where: { turma_id, aluno_id } });
         if(convite){
-            //console.log(convite);
             if(convite.status === "Aberto") {
                 return res.status(200).json({
                     Error: ["Convite ativo!"]

@@ -50,7 +50,6 @@ module.exports = {
                 quiz.title = title;
                 quiz.quizz_img = quizz_img;
                 //quiz.previous_activity_id = previous_activity_id;
-                //console.log(quiz);
                 await quiz.save();
                 return res.status(200).json({
                     Status: "Activity updated!"
@@ -300,7 +299,6 @@ module.exports = {
     async indexQuestionsAnswers(req, res){
         try{
             const { quiz_id, turma_id } = req.params;
-            console.log("#####" + quiz_id + ", " + turma_id + "#####")
             const questions = await Questao.findAll({
                 where: { quizz_id: quiz_id},
                 attributes: [

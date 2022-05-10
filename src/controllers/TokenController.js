@@ -44,22 +44,16 @@ module.exports = {
     async update(req, res) {
         const refreshToken = req.body.token;
         try{
-            console.log("-----token-----")
-            //console.log(refreshToken);
             if (!refreshToken){
                 return res.status(401).json("You are not authenticated!");
             }
             const refreshTokens = await RefreshTokens.findOne({where: {refresh_token: req.body.token}});
-            //console.log(refreshTokens.length);
-            console.log("...");
             if (!refreshTokens) {
                 return res.status(200).json({
                     Status: "Refresh token is not valid!"
                 });
             }
             jwt.verify(refreshToken, "SPdg58x41s8N1248R2G471D828E184X1hS85j5d82r58e25x85", async (err, user) => {
-                err && console.log(err);
-                //refreshTokens = refreshTokens.filter((token) => token.refresh_token !== refreshToken);
 
                 if(user.is_admin){
                     const admin = await Admin.findByPk(user.id);
@@ -165,7 +159,6 @@ module.exports = {
     },
     async delete(req, res){
         const { refreshToken } = req.params;
-        //console.log(req.params);
         try{
             const token = await RefreshTokens.findOne({ where: { refresh_token: refreshToken }});
             if(token){

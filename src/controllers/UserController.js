@@ -100,7 +100,6 @@ module.exports = {
     //verificar se existe aluno baseado no email e se já tem uma turma
     async userExist(req, res){
         const email = req.params.email;
-        console.log(email);
         try{
             const user = await User.findOne({
                 where: {email: email},

@@ -75,7 +75,6 @@ module.exports = {
     },
     async indexOne(req, res){
         const { id, token } = req.params;
-        //console.log(req.body);
         try{
             const notification = await Notification.findOne({ where: {aluno_id: id, title: token}});
             if(notification){
