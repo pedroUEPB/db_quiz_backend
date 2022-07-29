@@ -2,26 +2,30 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('turma-alunos', { 
+    await queryInterface.createTable('answers', { 
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      turma_id: {
+      question_id:{
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'turmas', key: 'id'},
+        references: { model: 'questions', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      }, 
+      group_alumn_id:{
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'group_alumns', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      aluno_id: {
-        type: Sequelize.INTEGER,
+      question_answer:{
+        type: Sequelize.STRING,
         allowNull: false,
-        references: { model: 'alunos', key: 'id'},
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       created_at: {
         type: Sequelize.DATE,
@@ -35,6 +39,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('turma-alunos');
+    await queryInterface.dropTable('answers');
   }
 };

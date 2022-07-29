@@ -1,6 +1,6 @@
 const { Model, Sequelize } = require('sequelize');
 
-class  Quizz extends Model{
+class  Quiz extends Model{
     static Init(sequelize){
         super.init({
             title: {
@@ -8,7 +8,7 @@ class  Quizz extends Model{
                 allowNull: false,
                 defaultValue: "Título da atividade",
             },
-            quizz_img: {
+            quiz_img: {
                 type: Sequelize.BLOB('long'),
                 allowNull: true
             },
@@ -22,15 +22,16 @@ class  Quizz extends Model{
                 allowNull: false
             }
         }, {
-            sequelize
+            sequelize,
+            tableName: "quizes"
         })
         return this;
     }
     static associate(models){
-        this.hasMany(models.Questao, { foreignKey: 'quizz_id', as: 'questoes' });
-        this.hasMany(models.QuizzTurma, { foreignKey: 'quizz_id', as: 'entregas' });
+        this.hasMany(models.Question, { foreignKey: 'quiz_id', as: 'questions' });
+        this.hasMany(models.QuizGroup, { foreignKey: 'quiz_id', as: 'entregas' });
     }
     
 }
 
-module.exports = Quizz;
+module.exports = Quiz;

@@ -1,6 +1,6 @@
 const { Model, Sequelize } = require('sequelize');
 
-class  TurmaAlunoQuiz extends Model{
+class  GroupAlumnQuiz extends Model{
     static Init(sequelize){
         super.init({
             is_finished: {
@@ -10,15 +10,15 @@ class  TurmaAlunoQuiz extends Model{
             },
         }, {
             sequelize,
-            tableName: 'turma_aluno_quizes'
+            tableName: 'group_alumn_quizes'
         })
         return this;
     }
 
     static associate(models){
-        this.belongsTo(models.TurmaAluno, { foreignKey: 'turma_aluno_id', as: 'turma_aluno' });
-        this.belongsTo(models.Quizz, { foreignKey: 'quiz_id', as: 'quiz' });
+        this.belongsTo(models.GroupAlumn, { foreignKey: 'group_alumn_id', as: 'group_alumn' });
+        this.belongsTo(models.Quiz, { foreignKey: 'quiz_id', as: 'quiz' });
     }
 }
 
-module.exports = TurmaAlunoQuiz;
+module.exports = GroupAlumnQuiz;

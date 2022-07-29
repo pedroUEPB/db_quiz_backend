@@ -1,24 +1,24 @@
 const { Model, Sequelize } = require('sequelize');
 
-class  Resposta extends Model{
+class  Answer extends Model{
     static Init(sequelize){
         super.init({
-            resposta_questao: {
+            question_answer: {
                 type: Sequelize.STRING,
                 allowNull: false,
             }
         }, {
             sequelize,
-            tableName: 'respostas'
+            tableName: 'answers'
         })
         return this;
     }
 
     static associate(models){
-        this.belongsTo(models.TurmaAluno, { foreignKey: 'turma_aluno_id', as: 'aluno' })
-        this.belongsTo(models.Questao, { foreignKey: 'questao_id', as: 'questao' })
+        this.belongsTo(models.GroupAlumn, { foreignKey: 'group_alumn_id', as: 'alumn' })
+        this.belongsTo(models.Question, { foreignKey: 'question_id', as: 'question' })
     }
     
 }
 
-module.exports = Resposta;
+module.exports = Answer;

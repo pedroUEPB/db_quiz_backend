@@ -1,6 +1,6 @@
 const { Model, Sequelize } = require('sequelize');
 
-class  Turma extends Model{
+class  Group extends Model{
     static Init(sequelize){
         super.init({
             title: {
@@ -12,6 +12,11 @@ class  Turma extends Model{
                 type: Sequelize.STRING,
                 allowNull: false,
                 defaultValue: "Não informado"
+            },
+            alumn_count: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
+                defaultValue: 0
             }
         }, {
             sequelize
@@ -20,11 +25,12 @@ class  Turma extends Model{
     }
 
     static associate(models){
-        this.belongsTo(models.Professor, { foreignKey: 'professor_id', as: 'professor' });
-        this.hasMany(models.TurmaAluno, { foreignKey: 'turma_id', as: 'alunos' });
-        this.hasMany(models.QuizzTurma, { foreignKey: 'turma_id', as: 'entrega' });
+        this.belongsTo(models.Teacher, { foreignKey: 'teacher_id', as: 'teacher' });
+        this.hasMany(models.GroupAlumn, { foreignKey: 'group_id', as: 'alumns' });
+        //data de entrega das atividades
+        this.hasMany(models.QuizGroup, { foreignKey: 'group_id', as: 'dates' });
     }
     
 }
 
-module.exports = Turma;
+module.exports = Group;

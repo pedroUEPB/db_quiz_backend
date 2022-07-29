@@ -18,7 +18,11 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: false
         },
-        is_professor: {
+        is_admin: {
+          type: Sequelize.BOOLEAN,
+          allowNull: false,
+        },
+        is_teacher: {
           type: Sequelize.BOOLEAN,
           allowNull: false,
         },
@@ -26,10 +30,6 @@ module.exports = {
           type: Sequelize.BOOLEAN,
           allowNull: true,
           defaultValue: false
-        },
-        is_admin: {
-          type: Sequelize.BOOLEAN,
-          allowNull: false,
         },
         form_clicked: {
           type: Sequelize.BOOLEAN,

@@ -1,32 +1,36 @@
 const { Model, Sequelize } = require('sequelize');
 
-class  Questao extends Model{
+class  Question extends Model{
     static Init(sequelize){
         super.init({
-            pergunta_texto: {
+            question_text: {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
-            pergunta_img: {
+            question_img: {
                 type: Sequelize.BLOB('long'),
                 allowNull: true,
             },
-            resposta_correta: {
+            correct_answer: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
+            position: {
+                type: Sequelize.INTEGER,
+                allowNull: false
+            }
         }, {
             sequelize,
-            tableName: "questoes"
+            tableName: "questions"
         })
         return this;
     }
 
     static associate(models){
-        this.belongsTo(models.Quizz, { foreignKey: 'quizz_id', as: 'quizz' });
-        this.hasMany(models.Resposta, { foreignKey: 'questao_id', as: 'respostas'});
+        this.belongsTo(models.Quiz, { foreignKey: 'quiz_id', as: 'quiz' });
+        this.hasMany(models.Answer, { foreignKey: 'question_id', as: 'answers'});
     }
     
 }
 
-module.exports = Questao;
+module.exports = Question;

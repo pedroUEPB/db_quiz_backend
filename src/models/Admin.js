@@ -6,7 +6,7 @@ class  Admin extends Model{
             username: Sequelize.STRING,
             profile_picture:{
                 type: Sequelize.BLOB('long'),
-                allowNull: true,
+                allowNull: true
             }
         }, {
             sequelize

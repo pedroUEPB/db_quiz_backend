@@ -1,9 +1,9 @@
 const { Model, Sequelize } = require('sequelize');
 
-class  Aluno extends Model{
+class  Alumn extends Model{
     static Init(sequelize){
         super.init({
-            matricula: {
+            register: {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
@@ -18,7 +18,7 @@ class  Aluno extends Model{
             },
             profile_picture:{
                 type: Sequelize.BLOB('long'),
-                allowNull: true,
+                allowNull: true
             },
             birthday: {
                 type: Sequelize.DATE,
@@ -52,9 +52,9 @@ class  Aluno extends Model{
     }
     static associate(models){
         this.belongsTo(models.User, { foreignKey: 'id', as: 'user' });
-        this.hasMany(models.TurmaAluno, { foreignKey: 'aluno_id', as: 'turmas' });
+        this.hasMany(models.GroupAlumn, { foreignKey: 'alumn_id', as: 'groups' });
     }
     
 }
 
-module.exports = Aluno;
+module.exports = Alumn;

@@ -8,19 +8,15 @@ class  User extends Model{
                 type: Sequelize.STRING,
                 allowNull: true,
             },
-            is_professor: {
+            is_admin:{
                 type: Sequelize.BOOLEAN,
-                defaultValue: false, 
+                defaultValue: false,
             },
-            is_aluno: {
+            is_teacher: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false, 
             },
             is_google_login:{
-                type: Sequelize.BOOLEAN,
-                defaultValue: false,
-            },
-            is_admin:{
                 type: Sequelize.BOOLEAN,
                 defaultValue: false,
             },
@@ -34,9 +30,9 @@ class  User extends Model{
         return this;
     }
     static associate(models){
-        this.hasOne(models.Professor, { foreignKey: 'id', as: 'professor'});
+        this.hasOne(models.Teacher, { foreignKey: 'id', as: 'teacher'});
         this.hasOne(models.Admin, { foreignKey: 'id', as: 'admin'});
-        this.hasOne(models.Aluno, { foreignKey: 'id', as: 'aluno'});
+        this.hasOne(models.Alumn, { foreignKey: 'id', as: 'alumn'});
     }
 }
 

@@ -1,9 +1,9 @@
 const { Model, Sequelize } = require('sequelize');
 
-class  Professor extends Model{
+class  Teacher extends Model{
     static Init(sequelize){
         super.init({
-            matricula: {
+            register: {
                 type: Sequelize.STRING,
                 allowNull: true,
             },
@@ -18,7 +18,7 @@ class  Professor extends Model{
             },
             profile_picture:{
                 type: Sequelize.BLOB('long'),
-                allowNull: true,
+                allowNull: true
             },
             birthday: {
                 type: Sequelize.DATE,
@@ -55,4 +55,4 @@ class  Professor extends Model{
     
 }
 
-module.exports = Professor;
+module.exports = Teacher;

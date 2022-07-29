@@ -18,8 +18,8 @@ class  Notification extends Model{
         return this;
     }
     static associate(models){
-        this.belongsTo(models.Aluno, { foreignKey: 'aluno_id', as: 'aluno' })
-        this.belongsTo(models.Turma, { foreignKey: 'turma_id', as: 'turma' })
+        this.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' })
+        this.belongsTo(models.Group, { foreignKey: 'group_id', as: 'group' })
     }
     
 }

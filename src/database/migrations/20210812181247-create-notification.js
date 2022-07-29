@@ -9,17 +9,17 @@ module.exports = {
         autoIncrement: true,
         allowNull: false,
       },
-      turma_id: {
+      group_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'turmas', key: 'id'},
+        references: { model: 'groups', key: 'id'},
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      aluno_id: {
+      user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'alunos', key: 'id'},
+        references: { model: 'users', key: 'id'},
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },

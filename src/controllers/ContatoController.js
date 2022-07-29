@@ -1,13 +1,15 @@
-const Contato = require("../models/Contato");
+const Contact = require("../models/Contact");
 
 module.exports = {
     async store(req, res) {
-        const contato = await Contato.create(req.body);
-        if(!contato){
+        const contact = await Contact.create(req.body);
+        if(!contact){
             return res.status(400).json({
-                Err: ["Contato não enviado"]
+                Status: "Contato não enviado"
             })
         }
-        return res.status(200).json(contato);
+        return res.status(200).json({
+            Status: "Contato enviado!"
+        });
     }
 }

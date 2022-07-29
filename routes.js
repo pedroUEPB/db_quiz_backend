@@ -1,107 +1,128 @@
 const express = require("express");
 const UserController = require("./src/controllers/UserController");
 const AuthController = require("./src/controllers/AuthController");
-const QuizzController = require("./src/controllers/QuizzController");
+const QuizController = require("./src/controllers/QuizController");
 const TurmaController = require("./src/controllers/TurmaController");
 const EmailController = require("./src/controllers/EmailController");
 const NotificationController = require("./src/controllers/NotificationController");
 const jwt = require("jsonwebtoken");
-const TokenController = require("./src/controllers/TokenController");
 const { verifyToken, verifyTokenAuth, verifyTokenAdmin } = require("./src/controllers/verifyToken");
 
 const routes = express.Router();
 
-const verify = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (authHeader) {
-    const token = authHeader.split(" ")[1];
-    //console.log("Token: " + token);
-    jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-      if (err) {
-        console.log(err);
-        return res.status(403).json({
-          Status: "Token is not valid!, " + err
-        });
-      }
-
-      req.user = user;
-      next();
-    });
-  } else {
-    res.status(401).json("You are not authenticated!");
-  }
-};
-
 //rotas do usuário
+//OK
 routes.post("/api/users/store", AuthController.store);
+//OK
 routes.post("/api/users/adminStore", verifyTokenAdmin, AuthController.storeAdmin);
+//OK
 routes.post("/api/login", AuthController.login);
+//OK
 routes.post("/api/users/verifPass/:id", verifyToken, AuthController.verifPass);
+//OK
 routes.put("/api/users/:id", UserController.updateUserPass);
+//OK
 routes.get("/api/users/:id", verifyTokenAuth, UserController.index);
+//OK
 routes.delete("/api/users/:id", verifyTokenAdmin, UserController.delete);
-//routes.post("/api/userPhoto", verifyToken, UserController.indexPhoto);
 
 
 //professor
-//routes.post("/api/professores", AuthController.storeProfessor);
+//OK
 routes.put("/api/usersProfessor/:id", verifyToken, UserController.updateProfessor);
 
 //aluno
-//routes.post("/api/alunos", AuthController.storeAluno);
-routes.get("/api/alunos/result/:id", verifyTokenAuth, UserController.indexResult);
+//OK
 routes.put("/api/usersAluno/:id", verifyToken, UserController.updateAluno);
-routes.get("/api/alunos/:email", verifyToken, UserController.userExist);
+//OK
+routes.get("/api/alunos", verifyToken, UserController.getAlumns);
 
 //admin
+//OK
 routes.get("/api/allUsers", verifyTokenAdmin, UserController.indexAll);
-routes.get("/api/allQuiz", verifyTokenAdmin, QuizzController.indexAllAdmin);
+//OK
+routes.get("/api/allQuiz", verifyTokenAdmin, QuizController.indexAllAdmin);
+//ok
+routes.get("/api/quizWithQuestions/:id", verifyTokenAdmin, QuizController.indexWithQuestions);
+//OK
 routes.get("/api/allGroups", verifyTokenAdmin, TurmaController.indexAllAdmin);
-routes.post("/api/quiz", verifyTokenAdmin, QuizzController.store);
+//OK
+routes.post("/api/quiz", verifyTokenAdmin, QuizController.store);
+//OK
 routes.put("/api/usersAdmin/:id", verifyTokenAdmin, UserController.updateAdmin);
 
 //rotas de contato
+//OK
 routes.post("/api/contato", EmailController.sendContact);
 
 //rotas de convite
-routes.post("/api/convite", verifyToken, EmailController.sendAlunoConvite);
+//OK
+routes.post("/api/invite", verifyToken, EmailController.sendGroupInvitation);
+//OK
 routes.get("/api/allNotifications/:id", verifyTokenAuth, NotificationController.indexNotificationsAluno);
-routes.get("/api/notifications/:id", verifyToken, NotificationController.index);
-routes.get("/api/notification/:token/:id", NotificationController.indexOne);
-routes.put("/api/notifications/:id", NotificationController.update);
+//OK
+routes.delete("/api/accept_invite/:id", verifyToken, NotificationController.accept);
+//OK
+routes.delete("/api/notifications/:id", verifyToken, NotificationController.reject);
+//OK
 routes.post("/api/recoverAccount", EmailController.recover);
 
-//rotas de quizz
-routes.post("/api/quizz/:quizz_id/:turma_id", verifyTokenAuth, QuizzController.storeDateEntrega);
-routes.post("/api/quizz/questao", verifyTokenAdmin, QuizzController.storeQuestion);
-routes.put("/api/quizz/questao/:question_id", verifyTokenAdmin, QuizzController.updateQuestion);
-routes.get("/api/quizz/:id", verifyToken, QuizzController.index);
-routes.get("/api/quizz/:id/:turma_aluno_id", verifyToken, QuizzController.indexQuizAluno);
-routes.get("/api/quiz", verifyTokenAuth, QuizzController.allActivities);
-routes.get("/api/quizzAll/:turma_id", verifyToken, QuizzController.indexAll);
-//routes.get("/api/respostasQuiz/:quiz_id/:turma_id", verifyToken, QuizzController.indexQuizTurma);
-routes.get("/api/respostasQuiz/:quiz_id/:turma_id", verifyToken, QuizzController.indexQuestionsAnswers);
-routes.put("/api/quizTurma/:id", verifyTokenAdmin, QuizzController.updateQuizTurma);
-routes.put("/api/quiz/:id", verifyTokenAdmin, QuizzController.update);
-routes.post("/api/quizz/resposta", verifyToken, QuizzController.storeAnswer);
-routes.delete("/api/quizz/questao/:id", verifyTokenAdmin, QuizzController.deleteQuestion);
-routes.delete("/api/quizz/:id", verifyTokenAdmin, QuizzController.delete);
+//rotas de quiz
+//OK
+routes.post("/api/quiz/:quiz_id/:group_id", verifyTokenAuth, QuizController.storeDateEntrega);
+//OK
+routes.post("/api/create_question", verifyTokenAdmin, QuizController.storeQuestion);
+//OK
+routes.put("/api/update_question", verifyTokenAdmin, QuizController.updateQuestion);
+//ok
+routes.get("/api/quiz/:id", verifyToken, QuizController.index);
+//OK
+routes.get("/api/quiz", verifyToken, QuizController.allActivities);
+//OK
+routes.get("/api/quiz_summary", verifyToken, QuizController.allActivitiesSummary);
+//OK
+routes.get("/api/quizAll/:group_id", verifyToken, QuizController.indexAll);
+//OK
+routes.get("/api/quiz_answers/:activity_id/:group_id", verifyToken, QuizController.indexQuestionsAnswers);
+//OK
+routes.put("/api/quizTurma/:id", verifyTokenAdmin, QuizController.updateQuizTurma);
+//OK
+routes.put("/api/quiz/:id", verifyTokenAdmin, QuizController.update);
+//OK
+routes.post("/api/quiz/answer", verifyToken, QuizController.storeAnswer);
+//OK
+routes.delete("/api/delete_question/:id", verifyTokenAdmin, QuizController.deleteQuestion);
+//OK
+routes.delete("/api/quiz/:id", verifyTokenAdmin, QuizController.delete);
+//OK
+routes.get("/api/general_statistics/:group_id/:activity_id", verifyToken, QuizController.getGeneralStatistics);
+//OK
+routes.get("/api/question", verifyToken, QuizController.getQuestion);
 
 //rotas de turma
+//OK
 routes.post("/api/turmas", verifyToken, TurmaController.store);
-routes.get("/api/turmas/:turma_id", verifyToken, TurmaController.index);
-routes.get("/api/quizzTurma/:turma_id", verifyTokenAdmin, TurmaController.quizzTurma);
-routes.get("/api/quizzTurma/:turma_id/:quizz_id", verifyToken, TurmaController.dataEntrega);
-routes.get("/api/todasTurmas/:id", verifyTokenAuth, TurmaController.indexAll);
-routes.get("/api/notasAluno/:id", verifyTokenAuth, TurmaController.indexAlunoWithNotas);
-routes.get("/api/notas/:id/:quiz_id", verifyToken, TurmaController.indexRespostas);
+//OK
+routes.get("/api/turmas/:group_id", verifyToken, TurmaController.index);
+//OK
+routes.get("/api/teacher_groups/:id", verifyTokenAuth, TurmaController.teacherGroups);
+//OK
+routes.get("/api/alumnGroups/:id", verifyTokenAuth, TurmaController.indexAllAlumn);
+//OK
 routes.get("/api/alunoTurma/:id", verifyTokenAuth, TurmaController.indexAluno);
-routes.get("/api/alunoResults/:id", verifyTokenAuth, TurmaController.indexAlunoResults);
-//routes.get("/api/alunoResults/:id", TurmaController.indexAlunoResults);
+//OK
+routes.get("/api/alumn_answers/:id", verifyToken, TurmaController.indexAnswers);
+//OK
+routes.get("/api/last_answer/:id/:quiz_id", verifyToken, TurmaController.lastAnswer);
+//OK
+routes.get("/api/alunoResults/:id", verifyToken, TurmaController.indexAlunoResults);
+//OK
 routes.delete("/api/turmas/:id", verifyToken, TurmaController.delete);
+//OK
 routes.delete("/api/turmas/deleteAluno/:id", verifyToken, TurmaController.deleteAluno);
+//OK
 routes.put("/api/turmas/:id", verifyToken, TurmaController.update);
-routes.put("/api/alunoTurma/:id", verifyTokenAuth, TurmaController.updateTurmaAluno);
-routes.put("/api/alunoTurmaQuiz/:id", verifyToken, TurmaController.updateOrCreateFinishAct);
+//OK
+routes.get("/api/finishedActivities/:id", verifyToken, TurmaController.getFinishedActivities);
 
 module.exports = routes;

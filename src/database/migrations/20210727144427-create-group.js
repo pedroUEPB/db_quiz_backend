@@ -2,15 +2,26 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('refresh_tokens', { 
+    await queryInterface.createTable('groups', { 
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      refresh_token: {
-        type: Sequelize.STRING(1000),
+      teacher_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'users', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      title: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      periode: {
+        type: Sequelize.STRING,
         allowNull: false
       },
       created_at: {
@@ -25,6 +36,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('refresh_tokens');
+    await queryInterface.dropTable('groups');
   }
 };

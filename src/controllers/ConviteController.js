@@ -1,49 +1,49 @@
-const TurmaAluno = require("../models/TurmaAluno");
-const Convite = require("../models/Convite");
+const GroupAlumn = require("../models/GroupAlumn");
+const Invitation = require("../models/Invitation");
 
 module.exports = {
     async index(req, res) {
-        const { turma_id, aluno_id } = req.params;
-        const convite = await Convite.findOne({ where: { turma_id, aluno_id } });
+        const { group_id, alumn_id } = req.params;
+        const convite = await Invitation.findOne({ where: { group_id, alumn_id } });
         if(convite){
             if(convite.status === "Aberto") {
                 return res.status(200).json({
-                    Error: ["Convite ativo!"]
+                    Status: "Convite ativo"
                 })
             }
             return res.status(200).json({
-                Error: ["Convite fechado!"]
+                Status: "Convite fechado"
             })
         }
         return res.status(200).json({
-            Error: ["Convite não encontrado!"]
+            Status: "Convite não encontrado"
         });
     },
     async change(req, res){
-        const { status, turma_id, aluno_id } = req.body;
+        const { status, group_id, alumn_id } = req.body;
         if(status === "Aceito"){
             const aluno = {
                 turma_id,
                 aluno_id
             }
-            const resp = await TurmaAluno.create(aluno);
-            const convite = await Convite.findOne({where: {
-                turma_id, 
-                aluno_id
+            await GroupAlumn.create(aluno);
+            const convite = await Invitation.findOne({where: {
+                group_id, 
+                alumn_id
             }});
             convite.status = status;
             await convite.destroy();
             return res.status(200).json({
-                Error: ["Convite aceito!"]
+                Status: "Convite aceito"
             })
         }
-        const convite = await Convite.findOne({where: {
-            turma_id, 
-            aluno_id
+        const convite = await Invitation.findOne({where: {
+            group_id, 
+            alumn_id
         }});
         await convite.destroy();
         return res.status(200).json({
-            Error: ["Convite rejeitado!"]
+            Status: "Convite rejeitado"
         })
     }
 }

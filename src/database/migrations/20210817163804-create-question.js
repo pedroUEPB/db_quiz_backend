@@ -2,27 +2,31 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('turmas', { 
+    await queryInterface.createTable('questions', { 
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      professor_id: {
+      quiz_id:{
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: { model: 'users', key: 'id' },
+        references: { model: 'quizes', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      title: {
+      question_text:{
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true,
       },
-      periode: {
+      question_img:{
+        type: Sequelize.BLOB,
+        allowNull: true,
+      },
+      correct_answer:{
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       created_at: {
         type: Sequelize.DATE,
@@ -36,6 +40,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('turmas');
+    await queryInterface.dropTable('questions');
   }
 };

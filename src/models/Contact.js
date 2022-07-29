@@ -1,11 +1,11 @@
 const { Model, Sequelize } = require('sequelize');
 
-class  Contato extends Model{
+class  Contact extends Model{
     static Init(sequelize){
         super.init({
             username: Sequelize.STRING,
 	        email: Sequelize.STRING,
-            assunto: Sequelize.STRING,
+            subject: Sequelize.STRING,
             mensagem: Sequelize.STRING,
         }, {
             sequelize
@@ -15,4 +15,4 @@ class  Contato extends Model{
     
 }
 
-module.exports = Contato;
+module.exports = Contact;

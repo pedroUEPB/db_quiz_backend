@@ -1,6 +1,6 @@
 const { Model, Sequelize } = require('sequelize');
 
-class  Convite extends Model{
+class  Invitation extends Model{
     static Init(sequelize){
         super.init({
             status: {
@@ -14,10 +14,10 @@ class  Convite extends Model{
         return this;
     }
     static associate(models){
-        this.belongsTo(models.Aluno, { foreignKey: 'aluno_id', as: 'aluno' })
-        this.belongsTo(models.Turma, { foreignKey: 'turma_id', as: 'turma' })
+        this.belongsTo(models.Alumn, { foreignKey: 'alumn_id', as: 'alumn' })
+        this.belongsTo(models.Group, { foreignKey: 'group_id', as: 'group' })
     }
     
 }
 
-module.exports = Convite;
+module.exports = Invitation;

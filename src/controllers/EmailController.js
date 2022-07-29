@@ -3,7 +3,7 @@ const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
 const config = require("../../config");
 const User = require("../models/User");
-const Turma = require("../models/Turma");
+const Group = require("../models/Group");
 const Notification = require("../models/Notification");
 const bcryptjs = require("bcryptjs");
 
@@ -40,56 +40,53 @@ module.exports = {
             if(error){
                 res.send(error);
             } else {
-                res.send("Mensagem enviada!");
+                res.send("Mensagem enviada");
             }
             transporter.close();
         })
 
     },
     //convite para turma
-    async sendAlunoConvite(req, res) {
-        const { dados, emails, title } = req.body;
+    async sendGroupInvitation(req, res) {
+        const { alumns, notifications, group_title } = req.body;
         //
         try{
             let Status = "Não enviado";
-            if(emails?.length > 0){
-                for(i=0; i<emails.length; i++){
-                    const eml = new Promise((resolve, reject)=>{
-                        const accessToken = OAuth2_client.getAccessToken();
-                        let transporter = nodemailer.createTransport({
-                            service: 'gmail',
-                            auth: {
-                                type: 'OAuth2',
-                                user: process.env.EMAIL,
-                                clientId: config.clientId,
-                                clientSecret: config.clientSecret,
-                                refreshToken: config.refreshToken,
-                                accessToken: accessToken
-                            }
-                        })
-                        const email = transporter.sendMail({
-                            from: `Screening Programming <${process.env.EMAIL}>`,
-                            to: emails[i].email,
-                            subject: "Convite",
-                            html: `<span>Convite para participar do grupo ${title}.
-                            Acesse sua conta para aceitar a solicitação.
-                            </span>
-                            `
-                        }, (error, response) => {
-                            if (error) {
-                                console.log(error);
-                                resolve(false);
-                            }
-                            resolve(true);
-                        })
+            for(let i = 0; i < alumns.length; i++){
+                const eml = new Promise((resolve, reject) => {
+                    const accessToken = OAuth2_client.getAccessToken();
+                    const  transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            type: 'OAuth2',
+                            user: process.env.EMAIL,
+                            clientId: config.clientId,
+                            clientSecret: config.clientSecret,
+                            refreshToken: config.refreshToken,
+                            accessToken: accessToken
+                        }
+                    });
+                    const email = transporter.sendMail({
+                        from: `Screening Programming <${process.env.EMAIL}>`,
+                        to: alumns[i].email,
+                        subject: "Convite",
+                        html: `<span>Convite para participar do grupo ${group_title}.
+                        Acesse sua conta para aceitar a solicitação.
+                        </span>
+                        `
+                    }, (error, response) => {
+                        if (error) {
+                            resolve(false);
+                        }
+                        resolve(true);
                     })
-                    if(eml){
-                        Status = "Convite enviado";
-                    }
+                })
+                if(eml){
+                    Status = alumns.length > 1 ? "Convites enviados" : "Convite enviado"
                 }
-                if(Status === "Convite enviado"){
-                    await Notification.bulkCreate(dados.notificacoes);
-                }
+            }
+            if(Status === "Convites enviados" || Status === "Convite enviado") {
+                await Notification.bulkCreate(notifications);
             }
             return res.status(200).json({
                 Status
@@ -119,7 +116,7 @@ module.exports = {
             const user = await User.findOne({ where: { email: data.email }});
             if(user){
                 if(!user.is_google_login){
-                    const turma = await Turma.findOne();
+                    const turma = await Group.findOne();
                     let emailSend={
                         from: `Screening Programming <${process.env.EMAIL}>`,
                         to: data.email,
@@ -134,7 +131,7 @@ module.exports = {
                     await transporter.sendMail(emailSend, async(error, response) => {
                         if(error){
                             return res.status(200).json({
-                                Status: ["Erro ao enviar email"]
+                                Status: "Erro ao enviar email"
                             })
                         } else {
                             const newUser = user;
@@ -142,8 +139,8 @@ module.exports = {
                             newUser.password = await bcryptjs.hash(data.pass, salt);
                             await user.save(newUser);
                             const notification = {
-                                turma_id: turma.id,
-                                aluno_id: user.id,
+                                group_id: turma.id,
+                                user_id: user.id,
                                 title: data.token,
                                 message: "trocar senha"
                             }
@@ -156,7 +153,7 @@ module.exports = {
                     transporter.close();
                 } else {
                     return res.status(200).json({
-                        Status: "Usuário cadastrado com o google!"
+                        Status: "Usuário cadastrado com o google"
                     })
                 }
             } else {

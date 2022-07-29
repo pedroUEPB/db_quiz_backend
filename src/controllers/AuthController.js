@@ -1,6 +1,6 @@
 const User = require("../models/User");
-const Professor = require("../models/Professor");
-const Aluno = require("../models/Aluno");
+const Teacher = require("../models/Teacher");
+const Alumn = require("../models/Alumn");
 const Admin = require("../models/Admin");
 //const bcrypt = require("bcrypt");
 const bcryptjs = require("bcryptjs");
@@ -9,9 +9,8 @@ const jwt = require("jsonwebtoken");
 const generateAccessToken = (user) => {
     return jwt.sign({ 
         id: user.id,
-        is_professor: user.is_professor,
+        is_teacher: user.is_teacher,
         is_admin: user.is_admin,
-        is_aluno: user.is_aluno,
         register_finished: user.register_finished,
         form_clicked: user.form_clicked,
     }, process.env.SECRET_KEY, {
@@ -22,6 +21,7 @@ const generateAccessToken = (user) => {
 module.exports = {
     //REGISTERS
     //store
+    //ok
     async store(req, res){
         try{
             const userVerif = await User.findOne({ where: { email: req.body.email } });
@@ -35,54 +35,52 @@ module.exports = {
                         password: hashedPassword,
                         is_google_login: req.body.is_google_login,
                         is_admin: req.body.is_admin,
-                        is_professor: req.body.is_professor,
-                        is_aluno: req.body.is_aluno,
+                        is_teacher: req.body.is_teacher,
                     }
                 } else {
                     user = {
                         email: req.body.email,
                         is_google_login: req.body.is_google_login,
                         is_admin: req.body.is_admin,
-                        is_professor: req.body.is_professor,
-                        is_aluno: req.body.is_aluno,
+                        is_teacher: req.body.is_teacher,
                     }
                 }
-                if(req.body.is_professor){
-                    //user.professor.username = req.body.professor.username;
+                if(req.body.is_teacher){
+                    //user.teacher.username = req.body.teacher.username;
                     const usr = await User.create({
                             ...user, 
-                            professor:{ 
-                                username: req.body.professor.username
+                            teacher:{ 
+                                username: req.body.teacher.username
                             }
                         }, {
                             include: {
-                                association: 'professor'
+                                association: 'teacher'
                             }
                     });
                     if(usr){
                         return res.status(200).json({
-                            Status: "Usuário cadastrado!"
+                            Status: "Usuário cadastrado"
                         })
                     }
-                } else if(req.body.is_aluno){
+                } else if(!req.body.is_teacher){
                     const usr = await User.create({
                         ...user, 
-                        aluno:{ 
-                            username: req.body.aluno.username
+                        alumn:{ 
+                            username: req.body.alumn.username
                         }
                     }, {
                         include: {
-                            association: 'aluno'
+                            association: 'alumn'
                         }
                 });
-                    if(usr){
+                if(usr){
                         return res.status(200).json({
-                            Status: "Usuário cadastrado!"
+                            Status: "Usuário cadastrado"
                         })
                     }
                 }
                 return res.status(200).json({
-                    Status: "Tipo de usuário não disponível!"
+                    Status: "Tipo de usuário não disponível"
                 })
             }
             return res.status(200).json({
@@ -94,69 +92,55 @@ module.exports = {
             })
         }
     },
+    //ok
     async storeAdmin(req, res){
         try{
             const userVerif = await User.findOne({ where: { email: req.body.email } });
             if(!userVerif){
-                let user;
+                let user = req.body;
                 if(!req.body.is_google_login){
                     const salt = await bcryptjs.genSalt(10);
                     const hashedPassword = await bcryptjs.hash(req.body.password, salt);
                     user = {
-                        email: req.body.email,
-                        password: hashedPassword,
-                        is_admin: req.body.is_admin,
-                        is_professor: req.body.is_professor,
-                        is_aluno: req.body.is_aluno,
-                        is_google_login: req.body.is_google_login,
+                        ...user,
+                        password: hashedPassword
                     }
                 } else {
                     user = {
-                        email: req.body.email,
-                        is_professor: req.body.is_professor,
-                        is_google_login: req.body.is_google_login,
-                        is_admin: req.body.is_admin
+                        ...user,
+                        is_google_login: true
                     }
                 }
-                if(req.body.is_professor){
-                    //user.professor.username = req.body.professor.username;
+                if(req.body.is_teacher){
+                    //user.teacher.username = req.body.teacher.username;
                     const usr = await User.create({
-                            ...user, 
-                            professor:{ 
-                                username: req.body.professor.username
-                            }
+                            ...user
                         }, {
-                            include: {
-                                association: 'professor'
-                            }
+                        include: {
+                            association: 'teacher'
+                        }
                     });
                     if(usr){
                         return res.status(200).json({
-                            Status: "Usuário cadastrado!"
+                            Status: "Usuário cadastrado"
                         })
                     }
-                } else if(req.body.is_aluno){
+                } else if(!req.body.is_teacher){
                     const usr = await User.create({
-                        ...user, 
-                        aluno:{ 
-                            username: req.body.aluno.username
-                        }
-                    }, {
+                            ...user
+                        }, {
                         include: {
-                            association: 'aluno'
+                            association: 'alumn'
                         }
-                });
+                    });
                     if(usr){
                         return res.status(200).json({
-                            Status: "Usuário cadastrado!"
+                            Status: "Usuário cadastrado"
                         })
                     }
                 }
                 const usr = await User.create({
-                    ...user, 
-                    admin:{ 
-                        username: req.body.admin.username
-                    }
+                    ...user
                     }, {
                     include: {
                         association: 'admin'
@@ -172,82 +156,75 @@ module.exports = {
             })
         }
     },
+    //ok
     async login(req, res) {
         try{
             const user = await User.findOne({ 
                 where: { email: req.body.email },
             });
-            if(!user){
-                return res.status(200).json({
-                    Status :"Usuário não encontrado!"
-                });
-            }
-            if(req.body.loginType === 0){
-                if(!user.is_google_login){
-                    const validPass = await bcryptjs.compare(req.body.password, user.password)
-                    if(!validPass){
+            if(user){
+                if(req.body.loginType === 0){
+                    if(!user.is_google_login){
+                        const validPass = await bcryptjs.compare(req.body.password, user.password)
+                        if(!validPass){
+                            return res.status(200).json({
+                                Status: "Senha incorreta"
+                            });
+                        }
+                    } else {
                         return res.status(200).json({
-                            Status: "Senha incorreta!"
-                        });
+                            Status: "Email registrado com o google"
+                        })
                     }
-                } else {
+                } else if(user.password){
                     return res.status(200).json({
-                        Status: "Email registrado com o google!"
+                        Status: "Usuário não cadastrado com o google"
                     })
                 }
-            } else if(user.password){
-                return res.status(200).json({
-                    Status: "Usuário não cadastrado com o google!"
-                })
-            }
-            if(user.is_admin){
-                const admin = await Admin.findByPk(user.id);
+                if(user.is_admin){
+                    const admin = await Admin.findByPk(user.id);
+                    const  accessToken = generateAccessToken({
+                        id: user.id,
+                        is_teacher: user.is_teacher,
+                        email: user.email,
+                        is_admin: user.is_admin
+                    });
+                    return res.status(200).json({accessToken})
+                }
+                if(user.is_teacher){
+                    const teacher = await Teacher.findByPk(user.id);
+                    const  accessToken = generateAccessToken({
+                        id: user.id,
+                        is_teacher: user.is_teacher,
+                        email: user.email,
+                        register_finished: teacher.register_finished,
+                        is_admin: user.is_admin,
+                        form_clicked: user.form_clicked
+                    });
+                    return res.status(200).json({accessToken})
+                }
+                //precis lterar pra pegar dados de turma-aluno, turma e quizz-turma
+                const alumn = await Alumn.findByPk(user.id);
                 const  accessToken = generateAccessToken({
                     id: user.id,
-                    is_professor: user.is_professor,
-                    is_aluno: user.is_aluno,
+                    is_teacher: user.is_teacher,
                     email: user.email,
-                    is_admin: user.is_admin
-                });
-                return res.status(200).json({accessToken})
-            }
-            if(user.is_professor){
-                const professor = await Professor.findByPk(user.id);
-                const  accessToken = generateAccessToken({
-                    id: user.id,
-                    is_professor: user.is_professor,
-                    is_aluno: user.is_aluno,
-                    email: user.email,
-                    register_finished: professor.register_finished,
+                    register_finished: alumn.register_finished,
                     is_admin: user.is_admin,
-                    form_clicked: user.form_clicked
+                    form_clicked: user.form_clicked,
                 });
-                return res.status(200).json({accessToken})
+                return res.status(200).json({accessToken});
             }
-            //precis lterar pra pegar dados de turma-aluno, turma e quizz-turma
-            const aluno = await Aluno.findByPk(user.id);
-            const  accessToken = generateAccessToken({
-                id: user.id,
-                is_professor: user.is_professor,
-                email: user.email,
-                is_aluno: user.is_aluno,
-                register_finished: aluno.register_finished,
-                is_admin: user.is_admin,
-                form_clicked: user.form_clicked,
+            return res.status(200).json({
+                Status :"Usuário não encontrado"
             });
-            return res.status(200).json({accessToken})
-
-            /*
-            const { email, is_professor, is_google_login, ...otherUser } = user.dataValues;
-            const { created_at, updated_at, ...other } = aluno.dataValues;
-            return res.status(200).json(Object.assign({}, other, {email, is_professor, is_google_login}));
-            */
         } catch(err){
             return res.status(200).json({
                 Status: "Erro interno, " + err
             });
         }
     },
+    //ok
     async verifPass(req, res){
         const { id } = req.params;
         const { password } = req.body;
@@ -257,7 +234,7 @@ module.exports = {
                 const validPass = await bcryptjs.compare(password, user.password);
                 if(!validPass){
                     return res.status(200).json({
-                        Status: "Senha incorreta!"
+                        Status: "Senha incorreta"
                     });
                 }
                 return res.status(200).json({

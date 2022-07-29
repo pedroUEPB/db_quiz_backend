@@ -1,78 +1,130 @@
-const Turma = require("../models/Turma");
-const Professor = require("../models/User");
-const TurmaAluno = require("../models/TurmaAluno");
-const QuizzTurma = require("../models/QuizzTurma");
-const Resposta = require("../models/Resposta");
-const TurmaAlunoQuiz = require("../models/TurmaAlunoQuiz");
-const Quizz = require("../models/Quizz");
+const Group = require("../models/Group");
+const Teacher = require("../models/Teacher");
+const User = require("../models/User");
+const Alumn = require("../models/Alumn");
+const GroupAlumn = require("../models/GroupAlumn");
+const QuizGroup = require("../models/QuizGroup");
+const Answer = require("../models/Answer");
+const GroupAlumnQuiz = require("../models/GroupAlumnQuiz");
+const Quiz = require("../models/Quiz");
 //const { sequelize } = require("../models/Turma");
 const sequelize = require("sequelize");
 
 module.exports = {
     //create
+    //ok
     async store(req, res){
-        const { professor_id } = req.body;
+        const { teacher_id } = req.body;
         try{
-            const professor = await Professor.findByPk(professor_id);
+            const professor = await User.findByPk(teacher_id);
             if(professor){
-                if(professor.is_professor){
-                    const turma = await Turma.create(req.body);
+                if(professor.is_teacher){
+                    const turma = await Group.create(req.body);
                     if(!turma){
-                        return res.status(400).json({
-                            Err: ["não foi possível salvar"]
+                        return res.status(200).json({
+                            Status: "Não foi possível salvar"
                         })
                     }
-                    return res.status(200).json(turma);
+                    return res.status(200).json({
+                        Status: "Grupo criado com sucesso"
+                    });
                 }
-                return res.status(400).json({
-                    Err: ["É necessário ser professor!"]
+                return res.status(200).json({
+                    Status: "É necessário ser professor"
                 })
             }
-            return res.status(400).json({
-                Err: ["Usuário não cadastrado"]
+            return res.status(200).json({
+                Status: "Usuário não cadastrado"
             })
         } catch(err){
-            return res.status(400).json(err)
+            return res.status(200).json({
+                Status: "Erro interno"
+            })
         }
     },
-    async indexAll(req, res){
+    //teacher groups
+    //ok
+    async teacherGroups(req, res){
         const id = req.params.id;
         try{
-            const professor = await Professor.findByPk(id);
+            const professor = await Teacher.findByPk(id);
             if(professor){
-                const turmas = await Turma.findAll({ 
-                    where: {professor_id: professor.id} 
+                const turmas = await Group.findAll({ 
+                    where: {teacher_id: professor.id} 
                 })
                 if(turmas){
                     return res.status(200).json(turmas);
                 }
                 return res.status(400).json({
-                    Err: ["Nenhuma turma encontrada!"]
+                    Status: "Nenhuma turma encontrada"
                 })
             }
             return res.status(400).json({
-                Err: ["Professor não encontrado!"]
+                Status: "Professor não encontrado"
             })
         } catch(err){
             return res.status(400).json({
-                Err: ["Erro ao procurar turmas"]
+                Status: "Erro ao procurar turmas"
             })
         }
     },
-    
+    //Alumn groups
+    //ok
+    async indexAllAlumn(req, res){
+        //id do aluno
+        const id = req.params.id;
+        try{
+            const alumn = await Alumn.findByPk(id);
+            if(alumn){
+                const turmas = await Group.findAll({ 
+                    include: [
+                        {
+                            association: "alumns",
+                            where: { alumn_id: id },
+                            attributes: ['group_id', 'alumn_id']
+                        },
+                        {
+                            association: "dates",
+                            attributes: ['final_date'],
+                            include: {
+                                association: "quiz",
+                                attributes: ['title']
+                            }
+                        }
+                    ],
+                    attributes: ['id', 'teacher_id', 'title', 'periode']
+                })
+                if(turmas){
+                    return res.status(200).json(turmas);
+                }
+                return res.status(400).json({
+                    Status: "Nenhuma turma encontrada"
+                })
+            }
+            return res.status(400).json({
+                Status: "Aluno não encontrado"
+            })
+        } catch(err){
+            return res.status(400).json({
+                Status: "Erro ao procurar turmas"
+            })
+        }
+    },
+    //ok
     async indexAllAdmin(req, res){
         try{
-            const groups = await Turma.findAll({
+            const groups = await Group.findAll({
                 include: [
                     {
-                        association: 'professor'
-                    },
-                    {
-                        association: 'alunos',
-                        include: {
-                            association: 'aluno'
-                        }
+                        association: 'teacher',
+                        attributes: ['id', 'username']
                     }
+                ],
+                attributes: [
+                    'id', 
+                    'title', 
+                    'periode',
+                    'alumn_count'
                 ]
             });
             return res.status(200).json({groups})
@@ -82,90 +134,58 @@ module.exports = {
             })
         }
     },
+    //ok
     async index(req, res){
-        const { turma_id } = req.params;
+        const { group_id } = req.params;
         try{
-            const turma = await Turma.findByPk(turma_id, {
+            const turma = await Group.findByPk(group_id, {
                 include: [
                     {
-                        association: 'alunos',
+                        association: 'alumns',
                         attributes: ['id'],
                         include: {
-                            association:'aluno', 
-                            attributes: ['id', 'username', 'matricula', 'profile_picture']
+                            association:'alumn', 
+                            attributes: ['id', 'username', 'register']
                         }
                     },
                     {
-                        association: 'professor'
+                        association: 'teacher',
+                        attributes: ['id', 'username']
                     }
-            ]
+                ],
+                attributes: ['id', 'teacher_id', 'title', 'periode']
             });
             if(turma){
                 return res.status(200).json(turma)
             }
             return res.status(200).json({
-                Status: "Turma não encontrada!"
+                Status: "Turma não encontrada"
             })
         } catch(err){
             return res.status(200).json({
-                Status: "Erro ao procurar turma"
+                Status: "Erro ao procurar turma, " + err
             })
         }
     },
-    async quizzTurma(req, res){
-        const { turma_id } = req.params;
-        try{
-            const turma = await Turma.findByPk(turma_id, {
-                include: {association: 'entrega', 
-                    include: {association: 'quizz'}
-                }
-            });
-            if(turma){
-                return res.status(200).json(turma)
-            }
-            return res.status(400).json({
-                Err: ["Turma não encontrada!"]
-            })
-        } catch(err){
-            return res.status(200).json({
-                Err: ["Erro ao procurar turma"]
-            })
-        }
-    },
-    async indexAlunoWithNotas(req, res){
-        const { id } = req.params;
-        try{
-            const aluno = await TurmaAluno.findOne({
-                where: {aluno_id: id},
-                include: {
-                    association: 'notas'
-                }
-            });
-            if(aluno){
-                return res.status(200).json({
-                    aluno
-                });
-            }
-                return res.status(200).json({
-                    Status: "Aluno não encontrado"
-                })
-        } catch(err){
-            return res.status(200).json({
-                Status: "Erro interno, " + err
-            })
-        }
-    },
+    //ok
     async indexAluno(req, res){
         const { id } = req.params;
         try{
-            const aluno = await TurmaAluno.findOne({
-                where: {aluno_id: id},
+            const aluno = await GroupAlumn.findOne({
+                where: {alumn_id: id},
+                attributes: ['id', 'alumn_id', 'group_id'],
                 include:[
                     {
-                        association: 'finishedActivities'
+                        association: 'finishedActivities',
+                        attributes: ['is_finished']
                     },
                     {
-                        association: 'notas'
+                        association: 'answers',
+                        attributes: ['id'],
+                        include: {
+                            association: 'question',
+                            attributes: ['quiz_id']
+                        }
                     }
                 ]
             });
@@ -183,33 +203,120 @@ module.exports = {
             })
         }
     },
-    
+    //ok
+    async indexAnswers(req, res){
+        const { id } = req.params;
+        try {
+            const answers = await GroupAlumn.findByPk(id, {
+                attributes: ['id', 'group_id', 'alumn_id'],
+                include: {
+                    association: "answers",
+                    attributes: ['id', 'question_id', 'group_alumn_id'],
+                    include: {
+                        association: "question",
+                        attributes: ['id', 'quiz_id']
+                    }
+                }
+            });
+            if(answers?.id != null){
+                return res.status(200).json(answers);
+            }
+            return res.status(200).json({
+                Status: "Aluno não encontrado"
+            })
+        } catch(err) {
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
+    //ok
+    async lastAnswer(req, res){
+        const { id, quiz_id } = req.params;
+        try {
+            const answer = await Answer.findAll({
+                limit: 1,
+                include: [
+                    {
+                        association: "alumn",
+                        attributes: ['id'],
+                        where: {
+                            id: id
+                        }
+                    },
+                    {
+                        association: "question",
+                        attributes: ['id', 'quiz_id', 'position'],
+                        where: {
+                            quiz_id: quiz_id
+                        }
+                    }
+                ],
+                order: [['created_at', 'DESC']]
+            });
+            return res.status(200).json(answer)
+            /*if(answer?.alumn?.id != null) {
+            }
+            return res.status(200).json({
+                Status: "Não encontrado"
+            })*/
+        } catch (err) {
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
+    //ok
+    async getFinishedActivities(req, res){
+        const { id } = req.params;
+        try{
+            const alumn = await GroupAlumn.findOne({
+                where: { id: id },
+                attributes: ['id'],
+                include: {
+                    association: "finishedActivities",
+                    attributes: ['id', 'quiz_id', 'group_alumn_id', 'is_finished']
+                }
+            });
+            if(!alumn){
+                return res.status(200).json({
+                    Status: "Não encontrado"
+                })
+            }
+            return res.status(200).json(alumn)
+        } catch(err) {
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
+    //ok
     async indexAlunoResults(req, res){
         //id do aluno não da turma_aluno
         const { id } = req.params;
         try{
-            const aluno = await TurmaAluno.findOne({ where: {aluno_id: id} });
+            const aluno = await GroupAlumn.findOne({ where: {alumn_id: id} });
             if(aluno){
-                const resultados = await Quizz.findAll({
+                const resultados = await Quiz.findAll({
                     attributes: [
                         'title', 'question_count',
                         [
                             sequelize.fn('SUM', 
                                 sequelize.where(
-                                    sequelize.col('questoes.respostas.resposta_questao'),
-                                    sequelize.col('questoes.resposta_correta'))
+                                    sequelize.col('questions.answers.question_answer'),
+                                    sequelize.col('questions.correct_answer'))
                             ), 
-                            'acertos'
+                            'hit'
                         ]
                     ],
                     include: {
                         association:
-                            'questoes',
+                            'questions',
                             attributes: [],
                             include: {
-                                association: 'respostas',
+                                association: 'answers',
                                 attributes: [],
-                                where: { turma_aluno_id: aluno.id }
+                                where: { group_alumn_id: aluno.id }
                             }
                         
                     },
@@ -227,107 +334,54 @@ module.exports = {
             })
         }
     },
-    //RESPOSTAS
-    async indexRespostas(req, res){
-        const { id, quiz_id } = req.params;
-        try{
-            const notas = await Resposta.findAll({
-                attributes: ['id', 'resposta_questao'],
-                include: [
-                    {
-                        association: 'aluno',
-                        attributes: ['id'],
-                        where: {turma_id: id},
-                        include: {
-                            association: 'aluno',
-                            attributes: ['id', 'username', 'matricula']
-                        }
-                    },
-                    {
-                        association: 'questao',
-                        attributes: ['resposta_correta'],
-                        where: {quizz_id: quiz_id}
-                    }
-                ]
-            });
-            if(notas){
-                return res.status(200).json(notas);
-            }
-            return res.status(200).json({
-                Status: "Nenhum dado encontrado"
-            })
-        } catch(err){
-            return res.status(200).json({
-                Status: "Erro interno, " + err
-            })
-        }
-    },
+    //ok
     async delete(req, res){
         const { id } = req.params;
         try{
-            const turma = await Turma.findByPk(id);
+            const turma = await Group.findByPk(id);
             if(turma){
                 turma.destroy();
                 return res.status(200).json({
-                    Status: ["Turma deletada"]
+                    Status: "Turma deletada"
                 })
             }
             return res.status(200).json({
-                Status: ["Turma não encontrada"]
+                Status: "Turma não encontrada"
             })
         } catch(err){
             return res.status(200).json({
-                Status: ["Erro ao deletar turma"]
+                Status: "Erro ao deletar turma"
             })
         }
     },
+    //ok
     async update(req, res){
         const { id } = req.params;
         try{
-            const turma = await Turma.findByPk(id);
+            const turma = await Group.findByPk(id);
             if(turma){
                 turma.update(req.body);
                 return res.status(200).json({
-                    Status: ["Dados do grupo alterados"]
+                    Status: "Dados do grupo alterados"
                 })
             }
             return res.status(200).json({
-                Status: ["Turma não encontrada"]
+                Status: "Turma não encontrada"
             })
         } catch(err){
             return res.status(200).json({
-                Status: ["Erro ao editar turma"]
+                Status: "Erro ao editar turma"
             })
         }
     },
-    async dataEntrega(req, res){
-        const { turma_id, quizz_id } = req.params;
-        try{
-            const quizzTurma = await QuizzTurma.findOne({ 
-                where: { 
-                    turma_id: turma_id, quizz_id: quizz_id 
-                }
-            });
-            if(quizzTurma){
-                return res.status(200).json({
-                    Status: "Encontrou",
-                    quizzTurma
-                })
-            }
-            return res.status(200).json({
-                Status: ["Não encontrado"]
-            })
-        } catch(err){
-            return res.status(200).json({
-                Status: ["Erro ao procurar data"]
-            })
-        }
-    },
+    //ok
     async deleteAluno(req, res){
         const { id } = req.params;
         try{
-            const aluno = await TurmaAluno.findByPk(id);
+            const aluno = await GroupAlumn.findByPk(id);
             if(aluno){
+                const group = await Group.findByPk(aluno.group_id);
+                await group.update({ alumn_count: group.alumn_count - 1 });
                 await aluno.destroy();
                 return res.status(200).json({
                     Status: "Aluno excluido"
@@ -342,61 +396,4 @@ module.exports = {
             })
         }
     },
-    async updateTurmaAluno(req, res){
-        const { id } = req.params;
-        try{
-            const turma_aluno = await TurmaAluno.findByPk(id);
-            if(turma_aluno){
-                const result = await turma_aluno.update(req.body);
-                if(result){
-                    return res.status(200).json({
-                        Status: "Salvo"
-                    })
-                }
-                return res.status(200).json({
-                    Status: "Erro ao salvar"
-                })
-            }
-            return res.status(200).json({
-                Status: "Aluno não encontrado"
-            })
-        } catch(err){
-            return res.status(200).json({
-                Status: "Erro interno, " + err
-            })
-        }
-    },
-    async updateOrCreateFinishAct(req, res){
-        const { id } = req.params;
-        try{
-            const turma_aluno = await TurmaAluno.findByPk(id);
-            if(turma_aluno){
-                const { quiz_id, turma_aluno_id, is_finished } = req.body;
-                const [fa, created] = await TurmaAlunoQuiz.findOrCreate({
-                    where: { quiz_id: quiz_id, turma_aluno_id: id},
-                    defaults: {
-                        quiz_id: quiz_id,
-                        turma_aluno_id: turma_aluno_id,
-                        is_finished: is_finished,
-                    }
-                })
-                if(created){
-                    return res.status(200).json({
-                        Status: "Atividade finalizada(creation)"
-                    })
-                }
-                await fa.save({is_finished: is_finished});
-                return res.status(200).json({
-                    Status: "Atividade finalizada(updating)"
-                })
-            }
-            return res.status(200).json({
-                Status: "Aluno não encontrado na turma"
-            })
-        } catch(err){
-            return res.status(200).json({
-                Status: "Erro interno, " + err
-            })
-        }
-    }
 }

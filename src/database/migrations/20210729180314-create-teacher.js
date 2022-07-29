@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('professors', { 
+    await queryInterface.createTable('teachers', { 
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         allowNull: false,
       },
-      matricula: {
+      register: {
         type: Sequelize.STRING,
         allowNull: true,
       },
@@ -25,8 +25,8 @@ module.exports = {
         allowNull: false
       },
       profile_picture: {
-        type: Sequelize.STRING,
-        allowNull: false
+        type: Sequelize.BLOB('long'),
+        allowNull: true
       },
       birthday: {
         type: Sequelize.DATE,
@@ -64,6 +64,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('professors');
+    await queryInterface.dropTable('teachers');
   }
 };
