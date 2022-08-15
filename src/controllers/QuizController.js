@@ -192,7 +192,8 @@ module.exports = {
     async allActivitiesSummary(req, res){
         try {
             const activities = await Quiz.findAll({
-                attributes: ['id', 'title']
+                attributes: ['id', 'title'],
+                where: { is_active: true }
             });
             if(activities){
                 return res.status(200).json({

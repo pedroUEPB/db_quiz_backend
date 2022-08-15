@@ -292,14 +292,14 @@ module.exports = {
     },
     //ok
     async indexAlunoResults(req, res){
-        //id do aluno não da turma_aluno
+        //id do aluno, não da turma_aluno
         const { id } = req.params;
         try{
             const aluno = await GroupAlumn.findOne({ where: {alumn_id: id} });
             if(aluno){
                 const resultados = await Quiz.findAll({
                     attributes: [
-                        'title', 'question_count',
+                        'title', 'question_count', 'is_active',
                         [
                             sequelize.fn('SUM', 
                                 sequelize.where(
@@ -309,6 +309,7 @@ module.exports = {
                             'hit'
                         ]
                     ],
+                    where: { is_active: true },
                     include: {
                         association:
                             'questions',
