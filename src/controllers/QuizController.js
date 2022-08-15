@@ -148,7 +148,7 @@ module.exports = {
         try{
             const { id } = req.params;
             const quiz = await Quiz.findByPk(id, {
-                attributes: ['id', 'title', 'quiz_img', 'question_count', 'previous_activity_id'],
+                attributes: ['id', 'title', 'quiz_img', 'question_count', 'previous_activity_id', 'is_active'],
                 include: {
                     association: "questions",
                     attributes: ['id', 'question_text', 'correct_answer', 'position'],
