@@ -22,6 +22,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      is_active: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false
+      },
       previous_activity_id:{
         type: Sequelize.INTEGER,
         allowNull: false,

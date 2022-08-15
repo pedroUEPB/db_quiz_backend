@@ -17,6 +17,11 @@ class  Quiz extends Model{
                 allowNull: false,
                 defaultValue: 0,
             },
+            is_active: {
+                type: Sequelize.BOOLEAN,
+                allowNull: true,
+                defaultValue: true
+            },
             previous_activity_id: {
                 type: Sequelize.INTEGER,
                 allowNull: false

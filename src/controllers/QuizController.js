@@ -171,7 +171,9 @@ module.exports = {
     //ok
     async allActivities(req, res){
         try{
-            const activities = await Quiz.findAll();
+            const activities = await Quiz.findAll({
+                where: { is_active: true }
+            });
             if(activities){
                 return res.status(200).json({
                     activities
@@ -352,7 +354,7 @@ module.exports = {
                         include: {
                             association: 'group',
                             attributes: ['id'],
-                            where: { id: group_id }
+                            where: { id: group_id, is_active: true }
                         }
                     },
                     attributes: ['id', 'title', 'quiz_img', 'previous_activity_id']
@@ -403,7 +405,7 @@ module.exports = {
     async indexAllAdmin(req, res){
         try{
             const activities = await Quiz.findAll({
-                attributes: ['id', 'title', 'quiz_img']
+                attributes: ['id', 'title', 'quiz_img', 'is_active']
             });
             return res.status(200).json(activities);
         } catch(err){
