@@ -311,17 +311,23 @@ module.exports = {
                         ]
                     ],
                     where: { is_active: true },
-                    include: {
-                        association:
-                            'questions',
+                    include: [
+                        {
+                            association: 'questions',
                             attributes: [],
                             include: {
                                 association: 'answers',
                                 attributes: [],
                                 where: { group_alumn_id: aluno.id }
                             }
-                        
-                    },
+                            
+                        },
+                        {
+                            association: 'entregas',
+                            attributes: [],
+                            where: { is_active: true }
+                        }
+                    ],
                     group: ['id'],
                     order: ['id']
                 })
