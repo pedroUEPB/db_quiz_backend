@@ -33,9 +33,6 @@ module.exports = {
         try{
             const quiz = await Quiz.findByPk(id);
             if(quiz){
-                //quiz.title = title;
-                //quiz.quiz_img = quiz_img;
-                //quiz.previous_activity_id = previous_activity_id;
                 await quiz.update(req.body);
                 return res.status(200).json({
                     Status: "Activity updated"
@@ -106,9 +103,14 @@ module.exports = {
     //ok
     async storeDateEntrega(req, res){
         const { quiz_id, group_id } = req.params;
-        const { final_date } = req.body;
+        const { final_date, is_active } = req.body;
         try{
-            const quiz = await QuizGroup.create({quiz_id: quiz_id, group_id: group_id, final_date: final_date});
+            const quiz = await QuizGroup.create({
+                quiz_id: quiz_id, 
+                group_id: group_id, 
+                final_date,
+                is_active
+            });
             if(quiz) {
                 return res.status(200).json({
                     Status: "Data alterada"
@@ -169,7 +171,33 @@ module.exports = {
         }
     },
     //ok
-    async allActivities(req, res){
+    async allActivities(req, res) {
+        const group_id = req.query.group_id;
+        try {
+            const activities = await QuizGroup.findAll({
+                where: { group_id: group_id, is_active: true },
+                attributes: ['id', 'group_id', 'final_date', 'is_active'],
+                include: {
+                    association: 'quiz',
+                    attributes: ['id', 'title', 'quiz_img', 'question_count', 'previous_activity_id'],
+                    where: { is_active: true }
+                }
+            });
+            if(activities){
+                return res.status(200).json({
+                    activities
+                })
+            }
+            return res.status(200).json({
+                Status: "Nenhuma atividade encontrada"
+            })
+        } catch(err) {
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
+    /*async allActivities(req, res){
         try{
             const activities = await Quiz.findAll({
                 where: { is_active: true }
@@ -187,7 +215,7 @@ module.exports = {
                 Status: "Erro interno, " + err
             })
         }
-    },
+    },*/
     //ok
     async allActivitiesSummary(req, res){
         try {
@@ -254,7 +282,7 @@ module.exports = {
         const { position, activity_id, group_alumn_id } = req.query;
         try {
             const question = await Question.findOne({
-                attributes: ['id', 'quiz_id', 'question_text', 'position'],
+                attributes: ['id', 'quiz_id', 'question_text', 'answer_type', 'position'],
                 where: {
                     position: { 
                         [sequelize.Op.gt]: position
@@ -351,14 +379,15 @@ module.exports = {
                 const quiz = await Quiz.findAll({
                     include: { 
                         association: 'entregas',
-                        attributes: ['id', 'final_date'],
+                        attributes: ['id', 'final_date', 'is_active'],
                         include: {
                             association: 'group',
                             attributes: ['id'],
-                            where: { id: group_id, is_active: true }
-                        }
+                            where: { id: group_id }
+                        },
                     },
-                    attributes: ['id', 'title', 'quiz_img', 'previous_activity_id']
+                    where: { is_active: true },
+                    attributes: ['id', 'title', 'quiz_img', 'previous_activity_id', 'is_active']
                 });
                 if(quiz){
                     return res.status(200).json(quiz);
@@ -418,12 +447,11 @@ module.exports = {
     //ok
     async updateQuizTurma(req, res){
         const { id } = req.params;
-        const { final_date } = req.body;
         try{
-            let quizzDB = await QuizGroup.findByPk(id);
-            if(quizzDB){
-                quizzDB.final_date = final_date;
-                const result = await quizzDB.save();
+            const quizDB = await QuizGroup.findByPk(id);
+            console.log(quizDB);
+            if(quizDB){
+                const result = await quizDB.update(req.body);
                 if(result){
                     return res.status(200).json({
                         Status: "Dados alterados"

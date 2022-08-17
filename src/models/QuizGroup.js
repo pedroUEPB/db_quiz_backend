@@ -8,6 +8,10 @@ class  QuizGroup extends Model{
                 type: Sequelize.DATE,
                 allowNull: false,
             },
+            is_active: {
+                type: Sequelize.BOOLEAN,
+                allowNull: true
+            }
         }, {
             sequelize,
             tableName: 'quiz_groups'

@@ -89,7 +89,8 @@ module.exports = {
                             include: {
                                 association: "quiz",
                                 attributes: ['title']
-                            }
+                            },
+                            where: { is_active: true }
                         }
                     ],
                     attributes: ['id', 'teacher_id', 'title', 'periode']

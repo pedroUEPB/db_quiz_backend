@@ -69,7 +69,7 @@ routes.post("/api/recoverAccount", EmailController.recover);
 
 //rotas de quiz
 
-routes.post("/api/quiz/:quiz_id/:group_id", verifyTokenAuth, QuizController.storeDateEntrega);
+routes.post("/api/quiz/:quiz_id/:group_id", verifyToken, QuizController.storeDateEntrega);
 
 routes.post("/api/create_question", verifyTokenAdmin, QuizController.storeQuestion);
 
@@ -85,7 +85,7 @@ routes.get("/api/quizAll/:group_id", verifyToken, QuizController.indexAll);
 
 routes.get("/api/quiz_answers/:activity_id/:group_id", verifyToken, QuizController.indexQuestionsAnswers);
 
-routes.put("/api/quizTurma/:id", verifyTokenAdmin, QuizController.updateQuizTurma);
+routes.put("/api/quizTurma/:id", verifyToken, QuizController.updateQuizTurma);
 
 routes.put("/api/quiz/:id", verifyTokenAdmin, QuizController.update);
 
