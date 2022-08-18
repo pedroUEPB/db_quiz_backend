@@ -79,7 +79,7 @@ routes.get("/api/quiz/:id", verifyToken, QuizController.index);
 
 routes.get("/api/quiz", verifyToken, QuizController.allActivities);
 
-routes.get("/api/quiz_summary", verifyToken, QuizController.allActivitiesSummary);
+routes.get("/api/quiz_summary/:group_id", verifyToken, QuizController.allActivitiesSummary);
 
 routes.get("/api/quizAll/:group_id", verifyToken, QuizController.indexAll);
 

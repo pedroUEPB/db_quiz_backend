@@ -11,9 +11,13 @@ class  Question extends Model{
                 type: Sequelize.BLOB('long'),
                 allowNull: true,
             },
+            answer_type: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
             correct_answer: {
                 type: Sequelize.STRING,
-                allowNull: false,
+                allowNull: true,
             },
             position: {
                 type: Sequelize.INTEGER,

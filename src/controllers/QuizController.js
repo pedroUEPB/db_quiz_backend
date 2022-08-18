@@ -153,7 +153,7 @@ module.exports = {
                 attributes: ['id', 'title', 'quiz_img', 'question_count', 'previous_activity_id', 'is_active'],
                 include: {
                     association: "questions",
-                    attributes: ['id', 'question_text', 'correct_answer', 'position'],
+                    attributes: ['id', 'question_text', 'answer_type', 'correct_answer', 'position'],
                     order: [["position", "ASC"]]
                 },
                 order: [["created_at", "ASC"]]
@@ -218,10 +218,16 @@ module.exports = {
     },*/
     //ok
     async allActivitiesSummary(req, res){
+        const { group_id } = req.params;
         try {
             const activities = await Quiz.findAll({
                 attributes: ['id', 'title'],
-                where: { is_active: true }
+                where: { is_active: true },
+                include: {
+                    association: 'entregas',
+                    attributes: [],
+                    where: { is_active: true, group_id}
+                }
             });
             if(activities){
                 return res.status(200).json({
