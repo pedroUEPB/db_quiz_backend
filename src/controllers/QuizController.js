@@ -4,6 +4,7 @@ const Answer = require("../models/Answer");
 const QuizGroup = require("../models/QuizGroup");
 const sequelize = require("sequelize");
 const GroupAlumnQuiz = require("../models/GroupAlumnQuiz");
+const { Op } = require("sequelize");
 
 module.exports = {
     //CREATE QUIZZ
@@ -264,6 +265,15 @@ module.exports = {
                             sequelize.col('answers.id')
                         ),
                         'answers_count'
+                    ],
+                    [
+                        sequelize.fn('SUM',
+                            sequelize.where(
+                                sequelize.col('answer_type'),
+                                'open'
+                            )
+                        ),
+                        'open_question_count'
                     ]
                 ],
                 include: {
@@ -317,7 +327,7 @@ module.exports = {
     async indexQuestionsAnswers(req, res){
         try{
             const { activity_id, group_id } = req.params;
-            const questions = await Question.findAll({
+            /*const questions = await Question.findAll({
                 where: { quiz_id: activity_id},
                 attributes: [
                     'question_text',
@@ -369,7 +379,25 @@ module.exports = {
                     }
                 },
                 group: ['id']
-            });
+            });*/
+            const questions = await Question.findAll({
+                where: { quiz_id: activity_id},
+                attributes: [
+                    'id',
+                    'question_text',
+                    'answer_type',
+                    'correct_answer'
+                ],
+                include: {
+                    association: 'answers',
+                    attributes: ['question_answer'],
+                    include: {
+                        association: 'alumn',
+                        attributes: [],
+                        where: { group_id: group_id }
+                    }
+                },
+            })
             return res.status(200).json(questions)
         } catch(err){
             return res.status(200).json({
@@ -378,11 +406,52 @@ module.exports = {
         }
     },
     //ok
+    async getActivitiesCount(req, res){
+        const { type, group_id } = req.query;
+        try {
+            switch(type){
+                case 'admin':
+                    const countAdmin = await Quiz.count();
+                    return res.status(200).json(countAdmin);
+                case 'teacher':
+                    const countTeacher = await Quiz.count({
+                        where: { is_active: true }
+                    });
+                    return res.status(200).json(countTeacher);
+                case 'alumn':
+                    const countAlumn = await Quiz.count({
+                        where: { is_active: true },
+                        include: {
+                            association: 'entregas',
+                            attributes: [],
+                            where: { is_active: true, group_id }
+                        }
+                    });
+                    return res.status(200).json(countAlumn);
+                    break;
+                default:
+                return res.status(200).json({
+                    Status: "Não encontrado"
+                })
+            }
+        } catch(err) {
+            return res.status(200).json({
+                Status: "Erro interno, " + err
+            })
+        }
+    },
+    //ok
     async indexAll(req, res) {
+        const { last_id } = req.query;
         const { group_id } = req.params;
         try{
             if(group_id != 0){
                 const quiz = await Quiz.findAll({
+                    attributes: ['id', 'title', 'quiz_img', 'previous_activity_id', 'is_active'],
+                    where: { 
+                        is_active: true, 
+                        id: { [Op.gt]: last_id }
+                    },
                     include: { 
                         association: 'entregas',
                         attributes: ['id', 'final_date', 'is_active'],
@@ -392,10 +461,12 @@ module.exports = {
                             where: { id: group_id }
                         },
                     },
-                    where: { is_active: true },
-                    attributes: ['id', 'title', 'quiz_img', 'previous_activity_id', 'is_active']
+                    limit: 10
                 });
                 if(quiz){
+                    for(let i =0;i<quiz.length;i++) {
+                        console.log(quiz[i].dataValues);
+                    }
                     return res.status(200).json(quiz);
                 }
             } else {
@@ -439,9 +510,14 @@ module.exports = {
     },
     //ok
     async indexAllAdmin(req, res){
+        const { last_id } = req.query;
         try{
             const activities = await Quiz.findAll({
-                attributes: ['id', 'title', 'quiz_img', 'is_active']
+                attributes: ['id', 'title', 'quiz_img', 'is_active'],
+                where: { 
+                    id: { [Op.gt]: last_id }
+                },
+                limit: 10
             });
             return res.status(200).json(activities);
         } catch(err){

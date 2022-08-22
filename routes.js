@@ -85,6 +85,8 @@ routes.get("/api/quizAll/:group_id", verifyToken, QuizController.indexAll);
 
 routes.get("/api/quiz_answers/:activity_id/:group_id", verifyToken, QuizController.indexQuestionsAnswers);
 
+routes.get("/api/activities_count", verifyToken, QuizController.getActivitiesCount);
+
 routes.put("/api/quizTurma/:id", verifyToken, QuizController.updateQuizTurma);
 
 routes.put("/api/quiz/:id", verifyTokenAdmin, QuizController.update);

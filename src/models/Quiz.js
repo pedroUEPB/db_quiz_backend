@@ -34,7 +34,7 @@ class  Quiz extends Model{
     }
     static associate(models){
         this.hasMany(models.Question, { foreignKey: 'quiz_id', as: 'questions' });
-        this.hasMany(models.QuizGroup, { foreignKey: 'quiz_id', as: 'entregas' });
+        this.hasOne(models.QuizGroup, { foreignKey: 'quiz_id', as: 'entregas' });
     }
     
 }
