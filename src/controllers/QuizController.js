@@ -464,9 +464,6 @@ module.exports = {
                     limit: 10
                 });
                 if(quiz){
-                    for(let i =0;i<quiz.length;i++) {
-                        console.log(quiz[i].dataValues);
-                    }
                     return res.status(200).json(quiz);
                 }
             } else {
@@ -531,7 +528,6 @@ module.exports = {
         const { id } = req.params;
         try{
             const quizDB = await QuizGroup.findByPk(id);
-            console.log(quizDB);
             if(quizDB){
                 const result = await quizDB.update(req.body);
                 if(result){
