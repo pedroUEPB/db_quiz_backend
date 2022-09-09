@@ -117,7 +117,7 @@ routes.get("/api/alumn_answers/:id", verifyToken, TurmaController.indexAnswers);
 
 routes.get("/api/last_answer/:id/:quiz_id", verifyToken, TurmaController.lastAnswer);
 
-routes.get("/api/alunoResults/:id", verifyToken, TurmaController.indexAlunoResults);
+routes.get("/api/alunoResults/:group_id/:alumn_id", verifyToken, TurmaController.indexAlunoResults);
 
 routes.delete("/api/turmas/:id", verifyToken, TurmaController.delete);
 

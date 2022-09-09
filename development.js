@@ -11,7 +11,7 @@ const webp = require("webp-converter");
 const bodyParser = require("body-parser");
 const allowCors = require("./src/config/cors");
 
-require("./src/database");
+require("./src/database/config_dev");
 
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use("/questions", express.static(path.join(__dirname, "public/questions")));
@@ -82,5 +82,5 @@ app.post("/api/saveImage", upload.single("file"), async(req, res)=>{
 app.use(routes);
 
 app.listen(process.env.PORT || 5000, () => {
-    console.log(`backend is RUNNING! ${process.env.PORT}`);
+    console.log(`DEVELOPMENT backend is RUNNING! ${process.env.PORT}`);
 })

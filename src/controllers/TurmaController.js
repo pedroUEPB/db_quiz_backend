@@ -293,12 +293,12 @@ module.exports = {
     },
     //ok
     async indexAlunoResults(req, res){
-        //id do aluno, não da turma_aluno
-        const { id } = req.params;
+        //id do turma_aluno
+        const { group_id, alumn_id } = req.params;
         try{
-            const aluno = await GroupAlumn.findOne({ where: {alumn_id: id} });
+            const aluno = await GroupAlumn.findOne({ where: { group_id, alumn_id } });
             if(aluno){
-                const resultados = await Quiz.findAll({
+                /*const resultados = await Quiz.findAll({
                     attributes: [
                         'title', 'question_count', 'is_active',
                         [
@@ -330,6 +330,37 @@ module.exports = {
                     ],
                     group: ['id'],
                     order: ['id']
+                })*/
+                const resultados = await QuizGroup.findAll({
+                    where: { group_id, is_active: true },
+                    attributes: [],
+                    include: {
+                        association: 'quiz',
+                        attributes: [
+                            'id', 'title', 'question_count', 'is_active',
+                            [
+                                sequelize.fn('SUM', 
+                                    sequelize.where(
+                                        sequelize.col('quiz.questions.answers.question_answer'),
+                                        sequelize.col('quiz.questions.correct_answer'))
+                                ), 
+                                'hit'
+                            ]
+                        ],
+                        include: [
+                            {
+                                association: 'questions',
+                                attributes: [],
+                                include: {
+                                    association: 'answers',
+                                    attributes: [],
+                                    where: { group_alumn_id: aluno.id }
+                                }
+                                
+                            }
+                        ],
+                    },
+                    group: ['quiz.id']
                 })
                 return res.status(200).json(resultados);
             }

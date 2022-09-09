@@ -8,8 +8,8 @@
     "node": "16.13.1"
   },
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon development.js",
+    "start": "node production.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
